@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORDHUB - Equipe</title>
+    <link rel="icon" type="image/png" href="media/favicon.png">
+    <link rel="stylesheet" href="media/style.css">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .team-section {
+            margin-top: 0;
+        }
+        .team-section:first-child {
+            margin-top: 2rem; /* Mantido para espaçamento adicional */
+        }
+        .category-title {
+            background-color: #2D3339;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.5em;
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 20px;
+        }
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+            background-color: transparent;
+            padding: 0;
+        }
+        .member-card {
+            background-color: #2D3339;
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .member-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 10px;
+        }
+        .member-name {
+            font-size: 1.2em;
+            margin: 5px 0;
+            color: #F4A261;
+        }
+        .member-role {
+            font-size: 0.9em;
+            color: #808080;
+            margin-bottom: 10px;
+        }
+        .ceo-label, .diretor-label, .admin-label, .moderator-label, .trial-label, .builder-label {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            display: inline-block;
+        }
+        .ceo-label { background-color: #FFD700; color: #000; }
+        .diretor-label { background-color: #00008B; color: #FFF; }
+        .admin-label { background-color: #FF0000; color: #FFF; }
+        .moderator-label { background-color: #800080; color: #FFF; }
+        .trial-label { background-color: #00FFFF; color: #000; }
+        .builder-label { background-color: #FFC0CB; color: #000; }
+        body {
+            background: linear-gradient(135deg, #1F252A, #2D3339);
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            padding: 20px;
+            padding-top: 7.5rem; /* Aumentado para cobrir navbar (4rem) + banner (3rem) + margem extra */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .desktop_navbar, .mobile_navbar {
+            background: rgba(45, 51, 57, 0.9);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(244, 162, 97, 0.3);
+        }
+        .desktop_navbar_link, .mobile_navbar_link {
+            color: #808080;
+            margin: 0 15px;
+            text-decoration: none;
+            transition: color 0.3s, transform 0.3s;
+            position: relative;
+        }
+        .desktop_navbar_link:hover, .mobile_navbar_link:hover {
+            color: #F4A261;
+            transform: scale(1.1);
+        }
+        .desktop_navbar_link::after, .mobile_navbar_link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #F4A261;
+            transition: width 0.3s;
+        }
+        .desktop_navbar_link:hover::after, .mobile_navbar_link:hover::after {
+            width: 100%;
+        }
+        .dropdown-content a::after {
+            display: none;
+        }
+        .mainflex {
+            flex: 1;
+        }
+        .copyright_div {
+            background: rgba(45, 51, 57, 0.9);
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            box-shadow: 0 -2px 10px rgba(244, 162, 97, 0.3);
+        }
+        .copyright {
+            color: #B0B0B0;
+            margin: 0;
+            font-size: 0.9em;
+        }
+        @media screen and (max-width: 600px) {
+            .member-card {
+                width: 120px;
+            }
+            .member-img {
+                width: 60px;
+                height: 60px;
+            }
+            body {
+                padding-top: 5.5rem; /* Ajustado para navbar mobile (53px ~ 3.3rem) + banner (3rem) */
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <nav class="desktop_navbar">
+      <a href="index.html"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <a href="index.html#sobre" class="desktop_navbar_link scroll"><i class="fa fa-info-circle"></i> Sobre</a>
+      <a href="equipe.html" class="desktop_navbar_link"><i class="fa fa-users"></i> Equipe</a>
+      <a href="loja.html" class="desktop_navbar_link"><i class="fa fa-shopping-cart"></i> Loja</a>
+      <a href="forum.html" class="desktop_navbar_link"><i class="fa fa-comments"></i> Fórum</a>
+      <div class="dropdown">
+        <a href="#" class="desktop_navbar_link dropdown-toggle"><i class="fa fa-book"></i> Outros</a>
+        <div class="dropdown-content">
+          <a href="doacao.html" class="desktop_navbar_link">Doação</a>
+          <a href="diretrizes.html" class="desktop_navbar_link">Diretrizes</a>
+          <a href="cps.html" class="desktop_navbar_link">CPS</a>
+        </div>
+      </div>
+    </nav>
+    <div class="mobile_navbar">
+      <a href="index.html" class="mobile_navbar_logo_img_a"><img class="mobile_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <div id="mobile_navbar_links">
+        <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="index.html#sobre"><i class="fa fa-info-circle"></i> Sobre</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="equipe.html"><i class="fa fa-users"></i> Equipe</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="loja.html"><i class="fa fa-shopping-cart"></i> Loja</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="forum.html"><i class="fa fa-comments"></i> Fórum</a>
+        <div class="dropdown">
+          <a class="mobile_navbar_link dropdown-toggle" onclick="mobile_navbar_link_hider()" href="#"><i class="fa fa-book"></i> Outros</a>
+          <div class="dropdown-content">
+            <a href="doacao.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Doação</a>
+            <a href="diretrizes.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Diretrizes</a>
+            <a href="cps.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">CPS</a>
+          </div>
+        </div>
+      </div>
+      <div class="icon" onclick="mobile_navbar_link_hider()">
+        <i class="fa fa-bars"></i>
+      </div>
+      <script>
+        function mobile_navbar_link_hider() {
+          var x = document.getElementById("mobile_navbar_links");
+          if (x.style.display === "flex") {
+            x.style.display = "none";
+          } else {
+            x.style.display = "flex";
+          }
+        }
+      </script>
+    </div>
+    <div class="team-section">
+        <h2 class="category-title">CEO</h2>
+        <div class="team-members">
+            <div class="member-card">
+                <img class="member-img" src="media/laranja.webp" alt="LaranjitoYT">
+                <div class="member-name">LaranjitoYT</div>
+                <div class="member-role">Chief Executive Officer</div>
+                <div class="ceo-label">CEO</div>
+            </div>
+        </div>
+    </div>
+    <div class="team-section">
+        <h2 class="category-title">Diretor</h2>
+        <div class="team-members">
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Diretor Geral</div>
+                <div class="diretor-label">Diretor</div>
+            </div>
+        </div>
+    </div>
+    <div class="team-section">
+        <h2 class="category-title">Administradores</h2>
+        <div class="team-members">
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Gerente do Servidor</div>
+                <div class="admin-label">Administrador</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Suporte Técnico</div>
+                <div class="admin-label">Administrador</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Coordenador de Eventos</div>
+                <div class="admin-label">Administrador</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Líder da Comunidade</div>
+                <div class="admin-label">Administrador</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Criador de Conteúdo</div>
+                <div class="admin-label">Administrador</div>
+            </div>
+        </div>
+    </div>
+    <div class="team-section">
+        <h2 class="category-title">Moderadores</h2>
+        <div class="team-members">
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Moderador de Chat</div>
+                <div class="moderator-label">Moderador</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Moderador da Comunidade</div>
+                <div class="moderator-label">Moderador</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Moderador do Fórum</div>
+                <div class="moderator-label">Moderador</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Moderador de Suporte</div>
+                <div class="moderator-label">Moderador</div>
+            </div>
+        </div>
+    </div>
+    <div class="team-section">
+        <h2 class="category-title">Trial</h2>
+        <div class="team-members">
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Trial Moderador</div>
+                <div class="trial-label">Trial</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Trial Suporte</div>
+                <div class="trial-label">Trial</div>
+            </div>
+        </div>
+    </div>
+    <div class="team-section">
+        <h2 class="category-title">Builder</h2>
+        <div class="team-members">
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Construtor Principal</div>
+                <div class="builder-label">Builder</div>
+            </div>
+            <div class="member-card">
+                <img class="member-img" src="media/astronavta_placeholder.webp" alt="VAGA">
+                <div class="member-name">VAGA</div>
+                <div class="member-role">Construtor Assistente</div>
+                <div class="builder-label">Builder</div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright_div">
+      <p class="copyright">© 2025 LORDHUB. Todos os direitos reservados.</p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORDHUB - Doação</title>
+    <link rel="icon" type="image/png" href="media/favicon.png">
+    <link rel="stylesheet" href="media/style.css">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      body {
+        background: linear-gradient(135deg, #1F252A, #2D3339);
+        color: #fff;
+        font-family: 'Space Grotesk', sans-serif;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .desktop_navbar, .mobile_navbar {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(244, 162, 97, 0.3);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .desktop_navbar_link, .mobile_navbar_link {
+        color: #808080;
+        margin: 0 15px;
+        text-decoration: none;
+        transition: color 0.3s, transform 0.3s;
+        position: relative;
+      }
+      .desktop_navbar_link:hover, .mobile_navbar_link:hover {
+        color: #F4A261;
+        transform: scale(1.1);
+      }
+      .desktop_navbar_link::after, .mobile_navbar_link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #F4A261;
+        transition: width 0.3s;
+      }
+      .desktop_navbar_link:hover::after, .mobile_navbar_link::after:hover {
+        width: 100%;
+      }
+      .dropdown-content a::after {
+        display: none;
+      }
+      .mainflex {
+        min-height: calc(100vh - 4rem);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        margin-top: 100px;
+      }
+      .main6 {
+        text-align: center;
+        width: 90%;
+        max-width: 900px;
+        background: linear-gradient(135deg, rgba(45, 51, 57, 0.95), rgba(30, 35, 40, 0.95));
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(244, 162, 97, 0.3);
+        margin: 20px auto;
+      }
+      .blaze-section {
+        background-color: #F28C38;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: left;
+        color: #fff;
+        margin: 20px auto;
+        max-width: 450px;
+        position: relative;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        overflow: visible;
+      }
+      .blaze-section h1 {
+        font-size: 2em;
+        margin: 0;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+      .blaze-section p {
+        font-size: 1em;
+        margin: 10px 0;
+      }
+      .blaze-section .text-content {
+        max-width: 70%;
+        z-index: 5;
+      }
+      .blaze-section .corner-image {
+        position: absolute;
+        top: 50%;
+        right: -160px;
+        transform: translateY(-50%);
+        width: 320px;
+        height: 320px;
+        z-index: 10;
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes float {
+        0% {
+          transform: translateY(-50%);
+        }
+        50% {
+          transform: translateY(-52.5%);
+        }
+        100% {
+          transform: translateY(-50%);
+        }
+      }
+      .donation-container {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 400px;
+        border: 2px solid #F4A261;
+      }
+      .donation-image {
+        max-width: 250px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+      .donate-button {
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #F4A261;
+        color: #1F252A;
+        text-decoration: none;
+        font-size: 1.1em;
+        font-weight: bold;
+        border-radius: 5px;
+        margin-top: 15px;
+        transition: transform 0.3s, background-color 0.3s;
+      }
+      .donate-button:hover {
+        background-color: #E88B3F;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(244, 162, 97, 0.5);
+      }
+      .benefits-section {
+        margin-top: 30px;
+        text-align: left;
+      }
+      .benefits-section h2 {
+        font-size: 1.8em;
+        color: #F4A261;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .benefits-list {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+      .benefits-list li {
+        background: rgba(45, 51, 57, 0.8);
+        padding: 15px;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 300px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: transform 0.3s;
+      }
+      .benefits-list li:hover {
+        transform: scale(1.05);
+      }
+      .benefits-list i {
+        color: #F4A261;
+        font-size: 1.5em;
+      }
+      .thank-you {
+        font-size: 1.5em;
+        color: #F4A261;
+        font-weight: bold;
+        margin-top: 30px;
+        text-align: center;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      /* Responsividade */
+      @media (max-width: 768px) {
+        .main6 {
+          width: 95%;
+          padding: 20px;
+        }
+        .blaze-section {
+          flex-direction: column;
+          text-align: center;
+          max-width: 100%;
+        }
+        .blaze-section .text-content {
+          max-width: 100%;
+        }
+        .blaze-section .corner-image {
+          position: static;
+          transform: none;
+          margin: 20px auto;
+          width: 200px;
+          height: 200px;
+        }
+        .donation-container {
+          max-width: 100%;
+        }
+        .benefits-list li {
+          max-width: 100%;
+        }
+      }
+      .copyright_div {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        box-shadow: 0 -2px 10px rgba(244, 162, 97, 0.3);
+      }
+      .copyright {
+        color: #B0B0B0;
+        margin: 0;
+        font-size: 0.9em;
+      }
+      /* Botão Azul e Chat */
+      .chat-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #007BFF;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        z-index: 1000;
+      }
+      .chat-menu {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        text-align: left;
+        color: #B0B0B0;
+        width: 250px;
+      }
+      .chat-menu img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+      }
+      .chat-menu p {
+        margin: 5px 0;
+      }
+      .chat-menu a {
+        color: #007BFF;
+        text-decoration: none;
+      }
+      .chat-menu a:hover {
+        text-decoration: underline;
+      }
+      .chat-menu button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-form {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+      .chat-form input {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-form button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-window {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .chat-messages {
+        height: 80%;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      .chat-messages p {
+        margin: 5px 0;
+        padding: 5px;
+        background: #3A4046;
+        border-radius: 5px;
+      }
+      .chat-input {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-input button {
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #007BFF;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-input .end-chat-btn {
+        background: linear-gradient(45deg, #FF0000, #CC0000);
+        margin-left: 5px;
+      }
+      /* Responsividade do Chat */
+      @media (max-width: 768px) {
+        .chat-button {
+          bottom: 10px;
+          right: 10px;
+          width: 50px;
+          height: 50px;
+          font-size: 20px;
+        }
+        .chat-menu {
+          width: 200px;
+          bottom: 70px;
+          right: 10px;
+        }
+        .chat-form {
+          bottom: 70px;
+          right: 10px;
+        }
+        .chat-window {
+          bottom: 70px;
+          right: 10px;
+          width: 250px;
+          height: 350px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <nav class="desktop_navbar">
+      <a href="index.html"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <a href="index.html#sobre" class="desktop_navbar_link scroll"><i class="fa fa-info-circle"></i> Sobre</a>
+      <a href="equipe.html" class="desktop_navbar_link"><i class="fa fa-users"></i> Equipe</a>
+      <a href="loja.html" class="desktop_navbar_link"><i class="fa fa-shopping-cart"></i> Loja</a>
+      <a href="forum.html" class="desktop_navbar_link"><i class="fa fa-comments"></i> Fórum</a>
+      <div class="dropdown">
+        <a href="#" class="desktop_navbar_link dropdown-toggle"><i class="fa fa-book"></i> Outros</a>
+        <div class="dropdown-content">
+          <a href="doacao.html" class="desktop_navbar_link">Doação</a>
+          <a href="diretrizes.html" class="desktop_navbar_link">Diretrizes</a>
+          <a href="cps.html" class="desktop_navbar_link">CPS</a>
+        </div>
+      </div>
+    </nav>
+    <div class="mobile_navbar">
+      <a href="index.html" class="mobile_navbar_logo_img_a"><img class="mobile_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <div id="mobile_navbar_links">
+        <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="index.html#sobre"><i class="fa fa-info-circle"></i> Sobre</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="equipe.html"><i class="fa fa-users"></i> Equipe</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="loja.html"><i class="fa fa-shopping-cart"></i> Loja</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="forum.html"><i class="fa fa-comments"></i> Fórum</a>
+        <div class="dropdown">
+          <a class="mobile_navbar_link dropdown-toggle" onclick="mobile_navbar_link_hider()" href="#"><i class="fa fa-book"></i> Outros</a>
+          <div class="dropdown-content">
+            <a href="doacao.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Doação</a>
+            <a href="diretrizes.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Diretrizes</a>
+            <a href="cps.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">CPS</a>
+          </div>
+        </div>
+      </div>
+      <div class="icon" onclick="mobile_navbar_link_hider()">
+        <i class="fa fa-bars"></i>
+      </div>
+      <script>
+        function mobile_navbar_link_hider() {
+          var x = document.getElementById("mobile_navbar_links");
+          if (x.style.display === "flex") {
+            x.style.display = "none";
+          } else {
+            x.style.display = "flex";
+          }
+        }
+      </script>
+    </div>
+    <div class="mainflex">
+      <div class="main6">
+        <div class="blaze-section">
+          <div class="text-content">
+            <h1>APOIE O LORDHUB COM UMA DOAÇÃO!</h1>
+            <p>Escaneie o QR Code abaixo para fazer sua doação e ajudar a manter nossa comunidade ativa e em crescimento.</p>
+          </div>
+          <img src="media/emde.png" alt="Corner Image" class="corner-image">
+        </div>
+        <div class="donation-container">
+          <img src="media/doa.png" alt="QR Code para Doação" class="donation-image">
+          <a href="https://link.mercadopago.com.br/lordhub" class="donate-button">Doar Agora!</a>
+        </div>
+        <div class="benefits-section">
+          <h2>Por que doar?</h2>
+          <ul class="benefits-list">
+            <li><i class="fa fa-star"></i> Receba um cargo especial no Discord da comunidade!</li>
+            <li><i class="fa fa-heart"></i> Seu nome nos agradecimentos no servidor!</li>
+            <li><i class="fa fa-gift"></i> Acesso a recompensas exclusivas no jogo!</li>
+            <li><i class="fa fa-server"></i> Ajude a manter o servidor online e com atualizações!</li>
+          </ul>
+        </div>
+        <p class="thank-you">Obrigado por apoiar o LordHub! ❤️ Sua doação faz toda a diferença!</p>
+      </div>
+    </div>
+    <footer class="copyright_div">
+      <a class="copyright">Todos os direitos reservados - LORDHUBMC © 2025</a>
+    </footer>
+    <button class="chat-button" onclick="toggleChat()">🗨️</button>
+    <div class="chat-menu" id="chat-menu">
+      <img src="media/favicon.png" alt="Chat Icon">
+      <p>📩 Precisa de ajuda?</p>
+      <p>Você pode entrar em contato com a nossa equipe de duas formas:</p>
+      <p>🔹 Pelo Gmail: <a href="mailto:lordhubloja@gmail.com">lordhubloja@gmail.com</a></p>
+      <p>🔹 Ou iniciar um papo com a gente clicando em "Iniciar Chat" aqui mesmo!</p>
+      <p>Estamos prontos pra te ajudar no que precisar!</p>
+      <button onclick="showChatForm()">Iniciar Papo</button>
+    </div>
+    <div class="chat-form" id="chat-form">
+      <input type="email" id="chat-gmail" placeholder="Digite seu Gmail">
+      <input type="text" id="chat-name" placeholder="Digite seu nome">
+      <button onclick="startChat()">Iniciar</button>
+    </div>
+    <div class="chat-window" id="chat-window">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input">
+        <input type="text" id="chat-message" placeholder="Digite sua mensagem">
+        <button onclick="sendMessage()">Enviar</button>
+        <button class="end-chat-btn" onclick="endChat()">Finalizar</button>
+      </div>
+    </div>
+    <script>
+      let currentChatId = localStorage.getItem('currentChatId') ? parseInt(localStorage.getItem('currentChatId')) : null;
+
+      $(document).ready(function() {
+        loadChat();
+        $(window).on('storage', function(e) {
+          if (e.originalEvent.key === 'chats' && currentChatId) {
+            loadChat();
+          }
+        });
+      });
+
+      function toggleChat() {
+        const menu = $('#chat-menu');
+        const form = $('#chat-form');
+        const window = $('#chat-window');
+        if (menu.is(':visible') || form.is(':visible') || window.is(':visible')) {
+          menu.hide();
+          form.hide();
+          window.hide();
+        } else {
+          menu.show();
+          const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            window.show();
+            loadChat();
+          }
+        }
+      }
+
+      function showChatForm() {
+        $('#chat-menu').hide();
+        $('#chat-form').show();
+      }
+
+      function startChat() {
+        const gmail = $('#chat-gmail').val();
+        const name = $('#chat-name').val();
+        if (gmail && name) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chatId = Date.now();
+          chats.push({ id: chatId, gmail, name, messages: [], date: new Date().toLocaleString() });
+          localStorage.setItem('chats', JSON.stringify(chats));
+          localStorage.setItem('currentChatId', chatId);
+          currentChatId = chatId;
+          $('#chat-gmail').val('');
+          $('#chat-name').val('');
+          $('#chat-form').hide();
+          $('#chat-window').show();
+          loadChat();
+        } else {
+          alert('Preencha todos os campos!');
+        }
+      }
+
+      function loadChat() {
+        const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+        const chat = chats.find(c => c.id === currentChatId);
+        if (chat) {
+          $('#chat-messages').empty();
+          chat.messages.forEach(msg => {
+            $('#chat-messages').append(`<p>${msg}</p>`);
+          });
+          $('#chat-window').show();
+          $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+        } else {
+          $('#chat-window').hide();
+          currentChatId = null;
+          localStorage.removeItem('currentChatId');
+        }
+      }
+
+      function sendMessage() {
+        const message = $('#chat-message').val();
+        if (message && currentChatId) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            chat.messages.push(`[Usuário] ${message}`);
+            localStorage.setItem('chats', JSON.stringify(chats));
+            $('#chat-message').val('');
+            loadChat();
+          }
+        }
+      }
+
+      function endChat() {
+        if (currentChatId && confirm('Deseja finalizar esta conversa?')) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          chats = chats.filter(c => c.id !== currentChatId);
+          localStorage.setItem('chats', JSON.stringify(chats));
+          localStorage.removeItem('currentChatId');
+          currentChatId = null;
+          $('#chat-window').hide();
+          $('#chat-menu').hide();
+        }
+      }
+
+      $(document).click(function(e) {
+        if (!$(e.target).closest('.chat-button, .chat-menu, .chat-form, .chat-window').length) {
+          $('#chat-menu').hide();
+          $('#chat-form').hide();
+          $('#chat-window').hide();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORDHUB - Diretrizes</title>
+    <link rel="icon" type="image/png" href="media/favicon.png">
+    <link rel="stylesheet" href="media/style.css">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      body {
+        background: linear-gradient(135deg, #1F252A, #2D3339);
+        color: #fff;
+        font-family: 'Space Grotesk', sans-serif;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .desktop_navbar, .mobile_navbar {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(244, 162, 97, 0.3);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .desktop_navbar_link, .mobile_navbar_link {
+        color: #808080;
+        margin: 0 15px;
+        text-decoration: none;
+        transition: color 0.3s, transform 0.3s;
+        position: relative;
+      }
+      .desktop_navbar_link:hover, .mobile_navbar_link:hover {
+        color: #F4A261;
+        transform: scale(1.1);
+      }
+      .desktop_navbar_link::after, .mobile_navbar_link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #F4A261;
+        transition: width 0.3s;
+      }
+      .desktop_navbar_link:hover::after, .mobile_navbar_link:hover::after {
+        width: 100%;
+      }
+      .dropdown-content a::after {
+        display: none;
+      }
+      .mainflex {
+        min-height: calc(100vh - 4rem);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        margin-top: 100px;
+      }
+      .main6 {
+        text-align: center;
+        width: 90%;
+        max-width: 900px;
+        background: linear-gradient(135deg, rgba(45, 51, 57, 0.95), rgba(30, 35, 40, 0.95));
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(244, 162, 97, 0.3);
+        margin: 20px auto;
+      }
+      .guidelines-container {
+        background: linear-gradient(135deg, #2D3339, #1F252A);
+        padding: 25px;
+        border-radius: 15px;
+        border: 2px solid #F4A261;
+      }
+      .guidelines-title {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        color: #F4A261;
+        text-transform: uppercase;
+        animation: fadeIn 1s ease-in;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .guidelines-section {
+        margin-bottom: 30px;
+        text-align: left;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .guidelines-section h2 {
+        font-size: 1.8em;
+        color: #F4A261;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #FFC107;
+        display: inline-block;
+      }
+      .guidelines-section p {
+        color: #B0B0B0;
+        font-size: 1.1em;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+      .guidelines-list {
+        list-style: none;
+        padding: 0;
+      }
+      .guidelines-list li {
+        background: rgba(45, 51, 57, 0.8);
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        display: flex;
+        align-items: flex-start;
+        transition: transform 0.3s;
+      }
+      .guidelines-list li:hover {
+        transform: translateX(10px);
+      }
+      .guidelines-list i {
+        color: #FFC107;
+        margin-right: 10px;
+        font-size: 1.2em;
+        margin-top: 2px;
+      }
+      .contact-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(45, 51, 57, 0.8);
+        border-radius: 10px;
+      }
+      .contact-section h2 {
+        font-size: 1.8em;
+        color: #F4A261;
+        margin-bottom: 15px;
+      }
+      .contact-section p {
+        color: #B0B0B0;
+        font-size: 1.1em;
+      }
+      .contact-section a {
+        color: #FFC107;
+        text-decoration: none;
+      }
+      .contact-section a:hover {
+        text-decoration: underline;
+      }
+      .copyright_div {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        box-shadow: 0 -2px 10px rgba(244, 162, 97, 0.3);
+      }
+      .copyright {
+        color: #B0B0B0;
+        margin: 0;
+        font-size: 0.9em;
+      }
+      /* Botão Azul e Chat */
+      .chat-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #007BFF;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        z-index: 1000;
+      }
+      .chat-menu {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        text-align: left;
+        color: #B0B0B0;
+        width: 250px;
+      }
+      .chat-menu img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+      }
+      .chat-menu p {
+        margin: 5px 0;
+      }
+      .chat-menu a {
+        color: #007BFF;
+        text-decoration: none;
+      }
+      .chat-menu a:hover {
+        text-decoration: underline;
+      }
+      .chat-menu button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-form {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+      .chat-form input {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-form button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-window {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .chat-messages {
+        height: 80%;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      .chat-messages p {
+        margin: 5px 0;
+        padding: 5px;
+        background: #3A4046;
+        border-radius: 5px;
+      }
+      .chat-input {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-input button {
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #007BFF;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-input .end-chat-btn {
+        background: linear-gradient(45deg, #FF0000, #CC0000);
+        margin-left: 5px;
+      }
+      /* Responsividade */
+      @media (max-width: 768px) {
+        .main6 {
+          width: 95%;
+          padding: 20px;
+        }
+        .guidelines-title {
+          font-size: 2em;
+        }
+        .guidelines-section h2 {
+          font-size: 1.5em;
+        }
+        .guidelines-section p {
+          font-size: 1em;
+        }
+        .guidelines-list li {
+          padding: 10px;
+        }
+        .contact-section h2 {
+          font-size: 1.5em;
+        }
+        .contact-section p {
+          font-size: 1em;
+        }
+        .chat-button {
+          bottom: 10px;
+          right: 10px;
+          width: 50px;
+          height: 50px;
+          font-size: 20px;
+        }
+        .chat-menu {
+          width: 200px;
+          bottom: 70px;
+          right: 10px;
+        }
+        .chat-form {
+          bottom: 70px;
+          right: 10px;
+        }
+        .chat-window {
+          bottom: 70px;
+          right: 10px;
+          width: 250px;
+          height: 350px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <nav class="desktop_navbar">
+      <a href="index.html"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <a href="index.html#sobre" class="desktop_navbar_link scroll"><i class="fa fa-info-circle"></i> Sobre</a>
+      <a href="equipe.html" class="desktop_navbar_link"><i class="fa fa-users"></i> Equipe</a>
+      <a href="loja.html" class="desktop_navbar_link"><i class="fa fa-shopping-cart"></i> Loja</a>
+      <a href="forum.html" class="desktop_navbar_link"><i class="fa fa-comments"></i> Fórum</a>
+      <div class="dropdown">
+        <a href="#" class="desktop_navbar_link dropdown-toggle"><i class="fa fa-book"></i> Outros</a>
+        <div class="dropdown-content">
+          <a href="doacao.html" class="desktop_navbar_link">Doação</a>
+          <a href="diretrizes.html" class="desktop_navbar_link">Diretrizes</a>
+          <a href="cps.html" class="desktop_navbar_link">CPS</a>
+        </div>
+      </div>
+    </nav>
+    <div class="mobile_navbar">
+      <a href="index.html" class="mobile_navbar_logo_img_a"><img class="mobile_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <div id="mobile_navbar_links">
+        <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="index.html#sobre"><i class="fa fa-info-circle"></i> Sobre</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="equipe.html"><i class="fa fa-users"></i> Equipe</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="loja.html"><i class="fa fa-shopping-cart"></i> Loja</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="forum.html"><i class="fa fa-comments"></i> Fórum</a>
+        <div class="dropdown">
+          <a class="mobile_navbar_link dropdown-toggle" onclick="mobile_navbar_link_hider()" href="#"><i class="fa fa-book"></i> Outros</a>
+          <div class="dropdown-content">
+            <a href="doacao.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Doação</a>
+            <a href="diretrizes.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Diretrizes</a>
+            <a href="cps.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">CPS</a>
+          </div>
+        </div>
+      </div>
+      <div class="icon" onclick="mobile_navbar_link_hider()">
+        <i class="fa fa-bars"></i>
+      </div>
+      <script>
+        function mobile_navbar_link_hider() {
+          var x = document.getElementById("mobile_navbar_links");
+          if (x.style.display === "flex") {
+            x.style.display = "none";
+          } else {
+            x.style.display = "flex";
+          }
+        }
+      </script>
+    </div>
+    <div class="mainflex">
+      <div class="main6">
+        <div class="guidelines-container">
+          <h1 class="guidelines-title">Regras e Diretrizes do LORDHUB</h1>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-info-circle"></i> Introdução</h2>
+            <p>👉 As seguintes regras foram definidas para manter uma jogabilidade e comunidade íntegra dentro de nossos servidores. O descumprimento de qualquer uma delas resulta em punição.</p>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-ban"></i> Casos que resultam em banimento permanente de todos os nossos servidores:</h2>
+            <ul class="guidelines-list">
+              <li><i class="fa fa-exclamation-triangle"></i> Uso de auxílios externos com intuito de obter vantagem sobre os demais jogadores (Uso de Trapaças).</li>
+              <li><i class="fa fa-exclamation-triangle"></i> Atitudes extremistas e discriminação com os outros jogadores (ex: racismo, antissemitismo, etc).</li>
+              <li><i class="fa fa-exclamation-triangle"></i> Uso de nickname ofensivo ou obsceno em conta não original.</li>
+              <li><i class="fa fa-exclamation-triangle"></i> Ameaças à estrutura do servidor e ataques DDoS.</li>
+            </ul>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-clock-o"></i> Casos que resultam em banimento temporário de todos os nossos servidores:</h2>
+            <ul class="guidelines-list">
+              <li><i class="fa fa-bug"></i> Abusar de bugs e falhas do servidor com intuito de se beneficiar em relação a outros jogadores.</li>
+              <li><i class="fa fa-users"></i> Free-kill: ajuda descarada de outros jogadores para aumentar as próprias estatísticas mais rapidamente, eliminando-os repetidas vezes.</li>
+              <li><i class="fa fa-user"></i> Uso inapropriado dos comandos de /nick ou /skin.</li>
+              <li><i class="fa fa-building"></i> Construções obscenas ou ofensivas.</li>
+              <li><i class="fa fa-user"></i> Uso de skin ou nickname ofensivo ou obsceno em conta original.</li>
+              <li><i class="fa fa-crosshairs"></i> Atrapalhar PvP de outros jogadores no modo Academy do servidor.</li>
+            </ul>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-microphone-slash"></i> Casos que resultam em silenciamento permanente de todos os nossos servidores:</h2>
+            <ul class="guidelines-list">
+              <li><i class="fa fa-exclamation-triangle"></i> Ameaçar outros jogadores visando intimidá-los (ex: invasão de contas, strike, exposição de dados).</li>
+              <li><i class="fa fa-exclamation-triangle"></i> Assédio e importunação, intimidando e visando denegrir a imagem de um ou mais jogadores.</li>
+              <li><i class="fa fa-exclamation-triangle"></i> Divulgação direta ou indireta de outros servidores nos chats.</li>
+              <li><i class="fa fa-exclamation-triangle"></i> Incentivo ao suicídio e/ou automutilação.</li>
+              <li><i class="fa fa-exclamation-triangle"></i> Qualquer atitude discriminativa ou misógina.</li>
+            </ul>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-microphone"></i> Casos que resultam em silenciamento temporário de todos os nossos servidores:</h2>
+            <ul class="guidelines-list">
+              <li><i class="fa fa-shopping-cart"></i> Comércio de serviços ou produtos.</li>
+              <li><i class="fa fa-comments"></i> Spam ou flood de mensagens nos chats.</li>
+              <li><i class="fa fa-warning"></i> Direcionar ofensas a outros jogadores.</li>
+              <li><i class="fa fa-warning"></i> Direcionar ofensas à nossa equipe de moderação ou administração.</li>
+              <li><i class="fa fa-lock"></i> Conteúdo sexualmente explícito.</li>
+              <li><i class="fa fa-link"></i> Divulgação de links inapropriados ou vídeos fora do servidor.</li>
+              <li><i class="fa fa-desktop"></i> Pedir screenshare de outros jogadores.</li>
+            </ul>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-exclamation-circle"></i> Ações adicionais</h2>
+            <p>🚨 Você pode denunciar infratores em nosso canal de denúncias no Discord.</p>
+            <p>🐛 Também é possível reportar bugs e falhas no Discord.</p>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-file-text"></i> Termos de Serviço</h2>
+            <p>© LORDHUB, 2025</p>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-check-square-o"></i> Termos de Uso e Pagamento</h2>
+            <ol class="guidelines-list">
+              <li><i class="fa fa-info-circle"></i> <strong>Condições de Uso</strong><br>Ao utilizar nossos serviços, você declara ter 18 anos ou mais, ou possuir autorização de um responsável legal. Você confirma que está autorizado a utilizar os métodos de pagamento informados. Cancelamentos ou estornos não autorizados de pagamentos não serão aceitos sem uma justificativa válida e análise prévia. O uso de quaisquer benefícios adquiridos deve ocorrer de forma justa e responsável.</li>
+              <li><i class="fa fa-user"></i> <strong>Gestão de Conta</strong><br>Reservamo-nos o direito de suspender ou encerrar qualquer conta, sem aviso prévio, por descumprimento de regras ou qualquer outro motivo justificado. A segurança das informações de login é de responsabilidade exclusiva do usuário. Em caso de comprometimento da conta, não garantimos reembolso ou transferência de produtos.</li>
+              <li><i class="fa fa-calendar"></i> <strong>Sobre a Validade dos Produtos</strong><br>"Validade" refere-se ao período em que o produto estará disponível, podendo ser encerrado em caso de descontinuação. Produtos encerrados são considerados devidamente entregues.</li>
+              <li><i class="fa fa-money"></i> <strong>Modificações e Valores</strong><br>Os preços e conteúdos dos produtos podem ser ajustados a qualquer momento, com ou sem aviso prévio. Alterações em benefícios ou classificações podem ocorrer visando o equilíbrio e a melhoria da experiência no servidor.</li>
+              <li><i class="fa fa-times"></i> <strong>Encerramento de Serviços</strong><br>Caso ocorra o encerramento parcial ou total das operações do servidor, você concorda que todos os serviços prestados foram completos e satisfatórios, não cabendo reembolso.</li>
+              <li><i class="fa fa-shield"></i> <strong>Responsabilidade e Indenização</strong><br>Você isenta a equipe, proprietários e parceiros do servidor de quaisquer responsabilidades por perdas ou danos decorrentes da utilização dos nossos serviços.</li>
+              <li><i class="fa fa-warning"></i> <strong>Limitação de Garantias</strong><br>O servidor é fornecido "como está", sem garantias expressas ou implícitas. Não nos responsabilizamos por prejuízos decorrentes do uso dos serviços.</li>
+              <li><i class="fa fa-ban"></i> <strong>Política de Suspensão e Banimento</strong><br>Contas que violarem regras podem ser suspensas ou banidas, sem direito a reembolso. Garantimos que nenhuma ação será tomada de forma arbitrária ou injustificada.</li>
+              <li><i class="fa fa-undo"></i> <strong>Reembolsos e Estornos</strong><br>Todas as vendas são finais. Não aceitamos reembolsos, exceto em casos específicos avaliados pela administração. Tentativas de estorno não autorizadas podem resultar em banimento e ações legais para recuperação de prejuízos.</li>
+              <li><i class="fa fa-users"></i> <strong>Relação com Terceiros</strong><br>O servidor não possui vínculo com a Mojang ou qualquer empresa terceira. Certifique-se de utilizar o nickname correto ao realizar suas compras.</li>
+            </ol>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-truck"></i> Prazos para Entrega de Produtos</h2>
+            <p>Compras realizadas via PIX, Cartão de Crédito ou Créditos na Loja são processadas automaticamente. Pagamentos via Depósito ou Boleto podem levar até 3 dias úteis para serem confirmados.</p>
+          </div>
+          <div class="guidelines-section">
+            <h2><i class="fa fa-lock"></i> Políticas de Privacidade</h2>
+            <p>👉 Bem-vindo às Políticas de Privacidade do LORDHUB. Estamos comprometidos em proteger suas informações pessoais e garantir uma experiência segura em nossa comunidade. Esta seção explica como coletamos, usamos, armazenamos e protegemos seus dados ao interagir com nossos serviços.</p>
+            <ul class="guidelines-list">
+              <li><i class="fa fa-info-circle"></i> <strong>Informações Coletadas</strong><br>Coletamos dados como nome, e-mail e informações de pagamento (ao usar a loja ou chat), além de dados de uso (IP, dispositivo, atividade no servidor) e mensagens via chat ou denúncias.</li>
+              <li><i class="fa fa-share"></i> <strong>Como Usamos Seus Dados</strong><br>Utilizamos seus dados para gerenciar sua conta, monitorar o cumprimento das diretrizes, prevenir trapaças, e enviar comunicações importantes.</li>
+              <li><i class="fa fa-shield"></i> <strong>Proteção de Dados</strong><br>Empregamos criptografia e acesso restrito para proteger seus dados, mas não garantimos proteção total contra violações externas.</li>
+              <li><i class="fa fa-times"></i> <strong>Compartilhamento de Dados</strong><br>Não compartilhamos seus dados, exceto em casos legais ou com parceiros de pagamento.</li>
+              <li><i class="fa fa-clock-o"></i> <strong>Armazenamento</strong><br>Seus dados são mantidos enquanto você for ativo; após 12 meses de inatividade ou solicitação, são anonimizados ou excluídos (salvo exigências legais).</li>
+              <li><i class="fa fa-user-secret"></i> <strong>Seus Direitos</strong><br>Você pode solicitar acesso, exclusão ou correção de seus dados via suporte.</li>
+              <li><i class="fa fa-cookie-bite"></i> <strong>Cookies</strong><br>Usamos cookies para melhorar a experiência; gerencie-os em seu navegador.</li>
+              <li><i class="fa fa-child"></i> <strong>Menores de Idade</strong><br>Nosso serviço não é para menores de 13 anos; dados de crianças serão excluídos se detectados.</li>
+              <li><i class="fa fa-file-text"></i> <strong>Alterações</strong><br>Podemos atualizar esta política; mudanças serão notificadas por e-mail ou no site.</li>
+            </ul>
+          </div>
+          <div class="contact-section">
+            <h2><i class="fa fa-envelope"></i> Contato e Suporte</h2>
+            <p>Para dúvidas ou suporte relacionado às suas compras, entre em contato pelo e-mail: <a href="mailto:lordhubrepoerte@gmail.com">lordhubrepoerte@gmail.com</a>. Para denúncias, reportes de bugs ou questões de privacidade, acesse nosso Discord: <a href="https://discord.gg/XQHjmphYqg">discord.gg/lordhub</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="copyright_div">
+      <a class="copyright">Todos os direitos reservados - LORDHUBMC © 2025</a>
+    </footer>
+    <button class="chat-button" onclick="toggleChat()">🗨️</button>
+    <div class="chat-menu" id="chat-menu">
+      <img src="media/favicon.png" alt="Chat Icon">
+      <p>📩 Precisa de ajuda?</p>
+      <p>Você pode entrar em contato com a nossa equipe de duas formas:</p>
+      <p>🔹 Pelo Gmail: <a href="mailto:lordhubloja@gmail.com">lordhubloja@gmail.com</a></p>
+      <p>🔹 Ou iniciar um papo com a gente clicando em "Iniciar Chat" aqui mesmo!</p>
+      <p>Estamos prontos pra te ajudar no que precisar!</p>
+      <button onclick="showChatForm()">Iniciar Papo</button>
+    </div>
+    <div class="chat-form" id="chat-form">
+      <input type="email" id="chat-gmail" placeholder="Digite seu Gmail">
+      <input type="text" id="chat-name" placeholder="Digite seu nome">
+      <button onclick="startChat()">Iniciar</button>
+    </div>
+    <div class="chat-window" id="chat-window">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input">
+        <input type="text" id="chat-message" placeholder="Digite sua mensagem">
+        <button onclick="sendMessage()">Enviar</button>
+        <button class="end-chat-btn" onclick="endChat()">Finalizar</button>
+      </div>
+    </div>
+    <script>
+      let currentChatId = localStorage.getItem('currentChatId') ? parseInt(localStorage.getItem('currentChatId')) : null;
+
+      $(document).ready(function() {
+        // Inicializar chat
+        loadChat();
+        $(window).on('storage', function(e) {
+          if (e.originalEvent.key === 'chats' && currentChatId) {
+            loadChat();
+          }
+        });
+      });
+
+      function toggleChat() {
+        const menu = $('#chat-menu');
+        const form = $('#chat-form');
+        const window = $('#chat-window');
+        if (menu.is(':visible') || form.is(':visible') || window.is(':visible')) {
+          menu.hide();
+          form.hide();
+          window.hide();
+        } else {
+          menu.show();
+          const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            window.show();
+            loadChat();
+          }
+        }
+      }
+
+      function showChatForm() {
+        $('#chat-menu').hide();
+        $('#chat-form').show();
+      }
+
+      function startChat() {
+        const gmail = $('#chat-gmail').val();
+        const name = $('#chat-name').val();
+        if (gmail && name) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chatId = Date.now();
+          chats.push({ id: chatId, gmail, name, messages: [], date: new Date().toLocaleString() });
+          localStorage.setItem('chats', JSON.stringify(chats));
+          localStorage.setItem('currentChatId', chatId);
+          currentChatId = chatId;
+          $('#chat-gmail').val('');
+          $('#chat-name').val('');
+          $('#chat-form').hide();
+          $('#chat-window').show();
+          loadChat();
+        } else {
+          alert('Preencha todos os campos!');
+        }
+      }
+
+      function loadChat() {
+        const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+        const chat = chats.find(c => c.id === currentChatId);
+        if (chat) {
+          $('#chat-messages').empty();
+          chat.messages.forEach(msg => {
+            $('#chat-messages').append(`<p>${msg}</p>`);
+          });
+          $('#chat-window').show();
+          $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+        } else {
+          $('#chat-window').hide();
+          currentChatId = null;
+          localStorage.removeItem('currentChatId');
+        }
+      }
+
+      function sendMessage() {
+        const message = $('#chat-message').val();
+        if (message && currentChatId) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            chat.messages.push(`[Usuário] ${message}`);
+            localStorage.setItem('chats', JSON.stringify(chats));
+            $('#chat-message').val('');
+            loadChat();
+          }
+        }
+      }
+
+      function endChat() {
+        if (currentChatId && confirm('Deseja finalizar esta conversa?')) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          chats = chats.filter(c => c.id !== currentChatId);
+          localStorage.setItem('chats', JSON.stringify(chats));
+          localStorage.removeItem('currentChatId');
+          currentChatId = null;
+          $('#chat-window').hide();
+          $('#chat-menu').hide();
+        }
+      }
+
+      $(document).click(function(e) {
+        if (!$(e.target).closest('.chat-button, .chat-menu, .chat-form, .chat-window').length) {
+          $('#chat-menu').hide();
+          $('#chat-form').hide();
+          $('#chat-window').hide();
+        }
+      });
+    </script>
+  </body>
+</html>

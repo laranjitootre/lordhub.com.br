@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORDHUB - Administração</title>
+    <link rel="icon" type="image/png" href="media/favicon.png">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      body {
+        background: linear-gradient(135deg, #1F252A, #2D3339);
+        color: #fff;
+        font-family: 'Space Grotesk', sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+      .login-container {
+        max-width: 400px;
+        margin: 0 auto;
+        background: rgba(45, 51, 57, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+      }
+      .login-container img {
+        max-width: 150px;
+        margin-bottom: 20px;
+      }
+      .login-container input {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .login-container button {
+        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .login-container button:hover {
+        background: linear-gradient(45deg, #6A1EC2, #4A0E92);
+      }
+      .admin-container {
+        max-width: 800px;
+        margin: 20px auto;
+        display: none;
+      }
+      /* Estilização das abas */
+      .admin-tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .tab-item {
+        padding: 10px 20px;
+        margin: 0 5px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 5px;
+        cursor: pointer;
+        color: #B0B0B0;
+        transition: background 0.3s, color 0.3s;
+      }
+      .tab-item:hover {
+        background: #8A2BE2;
+        color: #fff;
+      }
+      .tab-item.active-tab {
+        background: #8A2BE2;
+        color: #fff;
+      }
+      /* Seções */
+      .order-container, .post-container, .chat-container {
+        display: none;
+      }
+      .order-container.active, .post-container.active, .chat-container.active {
+        display: block;
+      }
+      .order, .post, .chat {
+        background: rgba(45, 51, 57, 0.8);
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        position: relative;
+      }
+      .order h3, .post h3, .chat h3 {
+        color: #8A2BE2;
+        margin: 0 0 10px;
+        text-transform: uppercase;
+      }
+      .order p, .post p, .chat p {
+        margin: 5px 0;
+        color: #B0B0B0;
+      }
+      .order-items, .post-content, .chat-messages {
+        margin-top: 10px;
+      }
+      .no-orders, .no-posts, .no-chats {
+        text-align: center;
+        color: #B0B0B0;
+      }
+      .clear-orders, .manage-posts, .delete-post, .edit-post, .end-chat, .reply-chat {
+        background: linear-gradient(45deg, #FF0000, #CC0000);
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+        margin-right: 10px;
+        display: inline-block;
+        transition: 0.3s;
+      }
+      .manage-posts {
+        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+        margin-bottom: 20px;
+      }
+      .edit-post {
+        background: linear-gradient(45deg, #F4A261, #D68A1A);
+      }
+      .reply-chat {
+        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+      }
+      .manage-posts:hover, .clear-orders:hover, .delete-post:hover, .edit-post:hover, .end-chat:hover, .reply-chat:hover {
+        transform: scale(1.05);
+      }
+      .post-form {
+        display: none;
+        background: rgba(45, 51, 57, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+      }
+      .post-form input, .post-form textarea {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .post-form button {
+        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .post-form button:hover {
+        background: linear-gradient(45deg, #6A1EC2, #4A0E92);
+      }
+      .post-content h3 {
+        color: #8A2BE2;
+        font-size: 1.5em;
+        margin: 15px 0 10px;
+      }
+      .post-content strong {
+        font-weight: bold;
+        color: #fff;
+      }
+      .post-content em {
+        font-style: italic;
+      }
+      .post-content ul {
+        list-style-type: disc;
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .post-content ul li {
+        color: #B0B0B0;
+        margin-bottom: 5px;
+      }
+      .post-content p {
+        margin: 10px 0;
+      }
+      .chat-messages p {
+        margin: 5px 0;
+      }
+      .post-form.editing .post-form-create {
+        display: none;
+      }
+      .post-form.editing .post-form-edit {
+        display: inline-block;
+      }
+      .chat-window {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .chat-messages {
+        height: 80%;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      .chat-messages p {
+        margin: 5px 0;
+        padding: 5px;
+        background: #3A4046;
+        border-radius: 5px;
+      }
+      .chat-input {
+        display: flex;
+        gap: 5px;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-input button {
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #007BFF;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <img src="media/logoadm.png" alt="LORDHUB Logo">
+      <h2>Alo - Login</h2>
+      <input type="password" id="admin-password" placeholder="Digite a senha de administrador">
+      <button onclick="login()">Entrar</button>
+    </div>
+    <div class="admin-container">
+      <div class="admin-tabs">
+        <div class="tab-item active-tab" data-tab="orders">Pedidos</div>
+        <div class="tab-item" data-tab="posts">Postagens</div>
+        <div class="tab-item" data-tab="chats">Chats</div>
+      </div>
+      <div class="order-container active">
+        <h2><i class="fa fa-star"></i> Pedidos Recebidos</h2>
+        <div id="orders-list"></div>
+        <button class="clear-orders" id="clear-orders"><i class="fa fa-trash"></i> Limpar Pedidos</button>
+      </div>
+      <div class="post-container">
+        <h2><i class="fa fa-pen"></i> Gerenciar Posts</h2>
+        <button class="manage-posts" id="show-post-form"><i class="fa fa-plus"></i> Novo Post</button>
+        <div id="post-form" class="post-form">
+          <input type="text" id="post-title" placeholder="Título do Post">
+          <textarea id="post-text" placeholder="Texto do Post" rows="5"></textarea>
+          <input type="hidden" id="post-id">
+          <button class="post-form-create" onclick="createPost()">Postar</button>
+          <button class="post-form-edit" onclick="updatePost()" style="display: none;">Salvar Alterações</button>
+        </div>
+        <div id="posts-list"></div>
+      </div>
+      <div class="chat-container">
+        <h2><i class="fa fa-comments"></i> Gerenciar Chats</h2>
+        <div id="chats-list"></div>
+      </div>
+    </div>
+    <div class="chat-window" id="chat-window">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input">
+        <input type="text" id="admin-message" placeholder="Digite sua resposta">
+        <button onclick="sendAdminMessage()">Enviar</button>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // Lógica para alternar abas
+        $('.tab-item').on('click', function() {
+          $('.tab-item').removeClass('active-tab');
+          $(this).addClass('active-tab');
+
+          var tab = $(this).data('tab');
+          $('.order-container, .post-container, .chat-container').removeClass('active').hide();
+          if (tab === 'orders') {
+            $('.order-container').addClass('active').show();
+          } else if (tab === 'posts') {
+            $('.post-container').addClass('active').show();
+          } else if (tab === 'chats') {
+            $('.chat-container').addClass('active').show();
+          }
+        });
+      });
+
+      function login() {
+        const password = $('#admin-password').val();
+        if (password === 'admin123') {
+          $('.login-container').hide();
+          $('.admin-container').show();
+          displayOrders();
+          displayPosts();
+          displayChats();
+        } else {
+          alert('Acesso negado!');
+        }
+      }
+
+      function parseMarkdown(text) {
+        let lines = text.split('\n').filter(line => line.trim() !== '');
+        let html = '';
+        let inList = false;
+
+        lines.forEach(line => {
+          if (line.startsWith('### ')) {
+            if (inList) {
+              html += '</ul>';
+              inList = false;
+            }
+            html += `<h3>${line.slice(4)}</h3>`;
+            return;
+          }
+
+          if (line.startsWith('* ')) {
+            if (!inList) {
+              html += '<ul>';
+              inList = true;
+            }
+            html += `<li>${line.slice(2)}</li>`;
+            return;
+          }
+
+          if (inList) {
+            html += '</ul>';
+            inList = false;
+          }
+
+          line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+          if (line.trim()) {
+            html += `<p>${line}</p>`;
+          }
+        });
+
+        if (inList) {
+          html += '</ul>';
+        }
+
+        return html;
+      }
+
+      function displayOrders() {
+        const ordersList = $('#orders-list');
+        ordersList.empty();
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        if (orders.length === 0) {
+          ordersList.append('<p class="no-orders">Nenhum pedido recebido.</p>');
+        } else {
+          orders.forEach(order => {
+            let itemsHtml = '<div class="order-items">';
+            order.items.forEach(item => {
+              itemsHtml += `<p>${item.product} - R$ ${item.price.toFixed(2)} x ${item.quantity} = R$ ${(item.price * item.quantity).toFixed(2)}</p>`;
+            });
+            itemsHtml += '</div>';
+            ordersList.append(`
+              <div class="order">
+                <h3>Pedido #${order.id}</h3>
+                <p><strong>Data:</strong> ${order.date}</p>
+                <p><strong>Gmail:</strong> ${order.gmail}</p>
+                <p><strong>Nick do Minecraft:</strong> ${order.minecraftNick}</p>
+                <p><strong>Nick do Discord:</strong> ${order.discordNick}</p>
+                ${itemsHtml}
+                <p><strong>Total:</strong> R$ ${order.total}</p>
+              </div>
+            `);
+          });
+        }
+      }
+
+      $('#clear-orders').on('click', function() {
+        if (confirm('Deseja limpar todos os pedidos?')) {
+          localStorage.removeItem('orders');
+          displayOrders();
+        }
+      });
+
+      $('#show-post-form').on('click', function() {
+        $('#post-title').val('');
+        $('#post-text').val('');
+        $('#post-id').val('');
+        $('.post-form-create').show();
+        $('.post-form-edit').hide();
+        $('#post-form').show();
+      });
+
+      function createPost() {
+        const title = $('#post-title').val();
+        const text = $('#post-text').val();
+        if (title && text) {
+          const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+          posts.push({ id: Date.now(), title, text, date: new Date().toLocaleString() });
+          localStorage.setItem('posts', JSON.stringify(posts));
+          $('#post-title').val('');
+          $('#post-text').val('');
+          $('#post-id').val('');
+          $('#post-form').hide();
+          displayPosts();
+          if (window.opener && !window.opener.closed) {
+            window.opener.location.reload();
+          }
+        } else {
+          alert('Preencha todos os campos!');
+        }
+      }
+
+      function editPost(postId) {
+        const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+        const post = posts.find(p => p.id === postId);
+        if (post) {
+          $('#post-title').val(post.title);
+          $('#post-text').val(post.text);
+          $('#post-id').val(post.id);
+          $('.post-form-create').hide();
+          $('.post-form-edit').show();
+          $('#post-form').show();
+        }
+      }
+
+      function updatePost() {
+        const title = $('#post-title').val();
+        const text = $('#post-text').val();
+        const postId = $('#post-id').val();
+        if (title && text && postId) {
+          let posts = JSON.parse(localStorage.getItem('posts') || '[]');
+          posts = posts.map(post => 
+            post.id === parseInt(postId) 
+              ? { ...post, title, text, date: new Date().toLocaleString() }
+              : post
+          );
+          localStorage.setItem('posts', JSON.stringify(posts));
+          $('#post-title').val('');
+          $('#post-text').val('');
+          $('#post-id').val('');
+          $('.post-form-create').show();
+          $('.post-form-edit').hide();
+          $('#post-form').hide();
+          displayPosts();
+          if (window.opener && !window.opener.closed) {
+            window.opener.location.reload();
+          }
+        } else {
+          alert('Preencha todos os campos!');
+        }
+      }
+
+      function displayPosts() {
+        const postsList = $('#posts-list');
+        postsList.empty();
+        const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+        if (posts.length === 0) {
+          postsList.append('<p class="no-posts">Nenhum post criado.</p>');
+        } else {
+          posts.forEach(post => {
+            const formattedText = parseMarkdown(post.text);
+            postsList.append(`
+              <div class="post">
+                <h3>${post.title}</h3>
+                <p><strong>Data:</strong> ${post.date}</p>
+                <div class="post-content">${formattedText}</div>
+                <button class="edit-post" onclick="editPost(${post.id})"><i class="fa fa-edit"></i> Editar</button>
+                <button class="delete-post" onclick="deletePost(${post.id})"><i class="fa fa-trash"></i> Deletar</button>
+              </div>
+            `);
+          });
+        }
+      }
+
+      function deletePost(postId) {
+        if (confirm('Deseja deletar este post?')) {
+          let posts = JSON.parse(localStorage.getItem('posts') || '[]');
+          posts = posts.filter(post => post.id !== postId);
+          localStorage.setItem('posts', JSON.stringify(posts));
+          displayPosts();
+          if (window.opener && !window.opener.closed) {
+            window.opener.location.reload();
+          }
+        }
+      }
+
+      function displayChats() {
+        const chatsList = $('#chats-list');
+        chatsList.empty();
+        const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+        if (chats.length === 0) {
+          chatsList.append('<p class="no-chats">Nenhum chat disponível.</p>');
+        } else {
+          chats.forEach(chat => {
+            chatsList.append(`
+              <div class="chat">
+                <h3>Chat #${chat.id}</h3>
+                <p><strong>Data:</strong> ${chat.date}</p>
+                <p><strong>Gmail:</strong> ${chat.gmail}</p>
+                <p><strong>Nome:</strong> ${chat.name}</p>
+                <div class="chat-messages">
+                  ${chat.messages.map(msg => `<p>${msg}</p>`).join('')}
+                </div>
+                <button class="reply-chat" data-chat-id="${chat.id}"><i class="fa fa-reply"></i> Responder</button>
+                <button class="end-chat" onclick="endChat(${chat.id})"><i class="fa fa-times"></i> Finalizar</button>
+              </div>
+            `);
+          });
+          $('.reply-chat').on('click', function(e) {
+            e.stopPropagation();
+            const chatId = parseInt($(this).data('chat-id'));
+            openChatWindow(chatId);
+          });
+        }
+      }
+
+      let currentChatId = null;
+
+      function openChatWindow(chatId) {
+        currentChatId = chatId;
+        const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+        const chat = chats.find(c => c.id === chatId);
+        if (chat) {
+          $('#chat-messages').empty();
+          chat.messages.forEach(msg => {
+            $('#chat-messages').append(`<p>${msg}</p>`);
+          });
+          $('#chat-window').show();
+          $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+        }
+      }
+
+      function sendAdminMessage() {
+        const message = $('#admin-message').val();
+        if (message && currentChatId) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            chat.messages.push(`[ADM] ${message}`);
+            localStorage.setItem('chats', JSON.stringify(chats));
+            $('#admin-message').val('');
+            $('#chat-messages').empty(); // Limpa antes de recarregar
+            chat.messages.forEach(msg => {
+              $('#chat-messages').append(`<p>${msg}</p>`);
+            });
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+            displayChats();
+          }
+        }
+      }
+
+      function endChat(chatId) {
+        if (confirm('Deseja finalizar este chat?')) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          chats = chats.filter(c => c.id !== chatId);
+          localStorage.setItem('chats', JSON.stringify(chats));
+          currentChatId = null;
+          $('#chat-window').hide();
+          displayChats();
+        }
+      }
+
+      $(document).click(function(e) {
+        if (!$(e.target).closest('.chat-window').length && !$(e.target).hasClass('reply-chat')) {
+          $('#chat-window').hide();
+          currentChatId = null;
+        }
+      });
+
+      // Adicionar evento de storage para sincronizar mensagens em tempo real
+      $(window).on('storage', function(e) {
+        if (e.originalEvent.key === 'chats' && currentChatId) {
+          const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            $('#chat-messages').empty();
+            chat.messages.forEach(msg => {
+              $('#chat-messages').append(`<p>${msg}</p>`);
+            });
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

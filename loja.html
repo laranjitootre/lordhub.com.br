@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORDHUB - Loja</title>
+    <link rel="icon" type="image/png" href="media/favicon.png">
+    <link rel="stylesheet" href="media/style.css">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- SDK do Mercado Pago -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+      /* Adicionando borda laranja no hover */
+      .featured-product:hover, .hidden-product:hover {
+        border: 2px solid orange;
+        transition: border 0.3s ease;
+      }
+
+      /* Estilizando o botão Comprar */
+      .buy-btn {
+        background-color: #8A2BE2; /* Roxo */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+
+      .buy-btn i {
+        margin-right: 5px;
+      }
+
+      .buy-btn:hover {
+        background-color: #6A1AB6; /* Roxo mais escuro ao hover */
+      }
+
+      /* Estilizando o botão Info */
+      .info-btn {
+        background-color: #FFA500; /* Laranja */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 16px;
+      }
+
+      .info-btn i {
+        margin-right: 5px;
+      }
+
+      .info-btn:hover {
+        background-color: #D88C00; /* Laranja mais escuro ao hover */
+      }
+
+      /* Estilizando a imagem do título */
+      .store-category img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+      }
+
+      /* Estilizando a aba do carrinho e info */
+      .cart-overlay, .info-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+      }
+
+      .cart-content, .info-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #1F252A;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        color: #fff;
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      .cart-content h2, .info-content h2 {
+        color: #8A2BE2;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .cart-content h2 i, .info-content h2 i {
+        margin-right: 5px;
+      }
+
+      .cart-content p, .info-content p {
+        margin: 10px 0;
+        color: #B0B0B0;
+      }
+
+      .cart-content .empty-cart {
+        text-align: center;
+        color: #B0B0B0;
+      }
+
+      .cart-content .explore-btn, .info-content .close-btn {
+        background-color: #8A2BE2;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      .cart-content .explore-btn i, .info-content .close-btn i {
+        margin-right: 5px;
+      }
+
+      .cart-content .explore-btn:hover, .info-content .close-btn:hover {
+        background-color: #6A1AB6;
+      }
+
+      .cart-content .coupon-input {
+        display: flex;
+        margin-top: 10px;
+      }
+
+      .cart-content .coupon-input input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        background-color: #2D3339;
+        color: #fff;
+      }
+
+      .cart-content .coupon-input button {
+        background-color: #8A2BE2;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+      }
+
+      .cart-content .coupon-input button:hover {
+        background-color: #6A1AB6;
+      }
+
+      .cart-content .total {
+        margin-top: 20px;
+        color: #8A2BE2;
+      }
+
+      .cart-content .checkout-btn {
+        background-color: #8A2BE2;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+        width: 100%;
+      }
+
+      .cart-content .checkout-btn i {
+        margin-right: 5px;
+      }
+
+      .cart-content .checkout-btn:hover {
+        background-color: #6A1AB6;
+      }
+
+      /* Centralizando o botão Carrinho verticalmente */
+      .store-sidebar {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        min-height: 200px; /* Ajuste conforme necessário */
+      }
+
+      .store-category, .store-banner {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .store-banner a {
+        margin-top: auto; /* Empurra o botão para o centro ou base */
+      }
+
+      /* Estilizando a notificação de item adicionado */
+      .buy-notification {
+        position: absolute;
+        background-color: #2D3339;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+        display: none;
+        z-index: 1001;
+      }
+
+      /* Estilizando mensagens de cupom */
+      .coupon-message {
+        font-size: 14px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .coupon-success {
+        color: #00FF00; /* Verde para sucesso */
+      }
+
+      .coupon-error {
+        color: #FF0000; /* Vermelho para erro */
+      }
+
+      /* Estilizando o botão de remoção de item */
+      .remove-item {
+        color: #FF0000;
+        font-size: 16px;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+
+      /* Ajustando o layout dos botões na área de ações */
+      .product-actions {
+        display: flex;
+        align-items: center;
+      }
+
+      /* Estilizando os campos de entrada do usuário */
+      .user-inputs {
+        margin-top: 15px;
+      }
+      .user-inputs label {
+        display: block;
+        margin-bottom: 5px;
+        color: #B0B0B0;
+      }
+      .user-inputs input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #2D3339;
+        color: #fff;
+        margin-bottom: 10px;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1F252A, #2D3339);
+        color: #fff;
+        font-family: 'Space Grotesk', sans-serif;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .desktop_navbar, .mobile_navbar {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(244, 162, 97, 0.3);
+      }
+      .desktop_navbar_link, .mobile_navbar_link {
+        color: #808080;
+        margin: 0 15px;
+        text-decoration: none;
+        transition: color 0.3s, transform 0.3s;
+        position: relative;
+      }
+      .desktop_navbar_link:hover, .mobile_navbar_link:hover {
+        color: #F4A261;
+        transform: scale(1.1);
+      }
+      .desktop_navbar_link::after, .mobile_navbar_link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #F4A261;
+        transition: width 0.3s;
+      }
+      .desktop_navbar_link:hover::after, .mobile_navbar_link:hover::after {
+        width: 100%;
+      }
+      /* Removendo o risco laranja apenas do dropdown Outros */
+      .dropdown-content a::after {
+        display: none;
+      }
+      .mainflex {
+        flex: 1;
+      }
+      .copyright_div {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        box-shadow: 0 -2px 10px rgba(244, 162, 97, 0.3);
+      }
+      .copyright {
+        color: #B0B0B0;
+        margin: 0;
+        font-size: 0.9em;
+      }
+
+      /* Estilizando o banner */
+      .sobre-banner {
+        width: 100%;
+        margin-top: 20px; /* Ajuste para abaixar o banner um pouco */
+      }
+
+      /* Estilos do botão de chat */
+      .chat-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #007BFF;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        z-index: 1000;
+      }
+      .chat-menu {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        text-align: left;
+        color: #B0B0B0;
+        width: 250px;
+      }
+      .chat-menu img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+      }
+      .chat-menu p {
+        margin: 5px 0;
+      }
+      .chat-menu a {
+        color: #007BFF;
+        text-decoration: none;
+      }
+      .chat-menu a:hover {
+        text-decoration: underline;
+      }
+      .chat-menu button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-form {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+      .chat-form input {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-form button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-window {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .chat-messages {
+        height: 80%;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      .chat-messages p {
+        margin: 5px 0;
+        padding: 5px;
+        background: #3A4046;
+        border-radius: 5px;
+      }
+      .chat-input {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-input button {
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #007BFF;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-input .end-chat-btn {
+        background: linear-gradient(45deg, #FF0000, #CC0000);
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <nav class="desktop_navbar">
+      <a href="index.html"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <a href="index.html#sobre" class="desktop_navbar_link scroll"><i class="fa fa-info-circle"></i> Sobre</a>
+      <a href="equipe.html" class="desktop_navbar_link"><i class="fa fa-users"></i> Equipe</a>
+      <a href="loja.html" class="desktop_navbar_link"><i class="fa fa-shopping-cart"></i> Loja</a>
+      <a href="forum.html" class="desktop_navbar_link"><i class="fa fa-comments"></i> Fórum</a>
+      <div class="dropdown">
+        <a href="#" class="desktop_navbar_link dropdown-toggle"><i class="fa fa-book"></i> Outros</a>
+        <div class="dropdown-content">
+          <a href="doacao.html" class="desktop_navbar_link">Doação</a>
+          <a href="diretrizes.html" class="desktop_navbar_link">Diretrizes</a>
+          <a href="cps.html" class="desktop_navbar_link">CPS</a>
+        </div>
+      </div>
+    </nav>
+    <div class="mobile_navbar">
+      <a href="index.html" class="mobile_navbar_logo_img_a"><img class="mobile_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <div id="mobile_navbar_links">
+        <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="index.html#sobre"><i class="fa fa-info-circle"></i> Sobre</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="equipe.html"><i class="fa fa-users"></i> Equipe</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="loja.html"><i class="fa fa-shopping-cart"></i> Loja</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="forum.html"><i class="fa fa-comments"></i> Fórum</a>
+        <div class="dropdown">
+          <a class="mobile_navbar_link dropdown-toggle" onclick="mobile_navbar_link_hider()" href="#"><i class="fa fa-book"></i> Outros</a>
+          <div class="dropdown-content">
+            <a href="doacao.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Doação</a>
+            <a href="diretrizes.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Diretrizes</a>
+            <a href="cps.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">CPS</a>
+          </div>
+        </div>
+      </div>
+      <div class="icon" onclick="mobile_navbar_link_hider()">
+        <i class="fa fa-bars"></i>
+      </div>
+      <script>
+        function mobile_navbar_link_hider() {
+          var x = document.getElementById("mobile_navbar_links");
+          if (x.style.display === "flex") {
+            x.style.display = "none";
+          } else {
+            x.style.display = "flex";
+          }
+        }
+      </script>
+    </div>
+    <div class="mainflex" style="min-height: calc(100vh - 4rem);">
+      <div class="main6">
+        <div class="sobre-container">
+          <!-- Banner da Loja -->
+          <img src="media/banner-loja.jpg" alt="Banner da Loja LordHub" class="sobre-banner">
+          <div class="sobre-content">
+            <div class="store-sidebar">
+              <!-- Categoria Ranks -->
+              <div class="store-category">
+                <img src="media/ranks_icon.png" alt="Ranks Icon">
+                <ul class="category-list">
+                  <li class="category-item active-category" data-category="ranks">Ranks</li>
+                  <li class="category-item" data-category="liberdade">Liberdade</li>
+                </ul>
+              </div>
+              <!-- Carrinho -->
+              <div class="store-banner">
+                <a href="#" class="store-banner-link" id="cart-link">Carrinho</a>
+              </div>
+            </div>
+            <div class="store-products">
+              <!-- Produto em Destaque -->
+              <div class="featured-product" id="product-display">
+                <div class="product-image">
+                  <img src="media/beta_eterno_placeholder.webp" alt="Beta Eterno">
+                </div>
+                <div class="product-details">
+                  <h4>Beta Eterno</h4>
+                  <p class="product-price">R$ 69,99</p>
+                </div>
+                <div class="product-actions">
+                  <button class="buy-btn" data-product="Beta Eterno" data-price="69.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="info-btn" data-product="Beta Eterno" data-price="69.99" data-description="Acesso vitalício ao Beta Eterno com benefícios exclusivos."><i class="fa fa-question-circle"></i> Info</button>
+                </div>
+                <span class="featured-tag">EM DESTAQUE</span>
+              </div>
+              <!-- Produto VIP -->
+              <div class="hidden-product" data-category="ranks" style="background-color: #90EE90;">
+                <div class="product-image">
+                  <img src="media/vip_placeholder.webp" alt="VIP">
+                </div>
+                <div class="product-details">
+                  <h4>VIP</h4>
+                  <p class="product-price">R$ 49,99</p>
+                </div>
+                <div class="product-actions">
+                  <button class="buy-btn" data-product="VIP" data-price="49.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="info-btn" data-product="VIP" data-price="49.99" data-description="Rank VIP com vantagens especiais por 30 dias."><i class="fa fa-question-circle"></i> Info</button>
+                </div>
+                <span class="featured-tag">NOVO</span>
+              </div>
+              <!-- Produto Ultra -->
+              <div class="hidden-product" data-category="ranks" style="background-color: #FFB6C1;">
+                <div class="product-image">
+                  <img src="media/ultra_placeholder.webp" alt="Ultra">
+                </div>
+                <div class="product-details">
+                  <h4>Ultra</h4>
+                  <p class="product-price">R$ 89,99</p>
+                </div>
+                <div class="product-actions">
+                  <button class="buy-btn" data-product="Ultra" data-price="89.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="info-btn" data-product="Ultra" data-price="89.99" data-description="Rank Ultra com benefícios premium por 30 dias."><i class="fa fa-question-circle"></i> Info</button>
+                </div>
+                <span class="featured-tag">NOVO</span>
+              </div>
+              <!-- Produtos de Liberdade -->
+              <div class="hidden-product" data-category="liberdade" style="display: none; background-color: #808080;">
+                <div class="product-image">
+                  <img src="media/ban_placeholder.webp" alt="Ban">
+                </div>
+                <div class="product-details">
+                  <h4>Ban</h4>
+                  <p class="product-price">R$ 29,99</p>
+                </div>
+                <div class="product-actions">
+                  <button class="buy-btn" data-product="Ban" data-price="29.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="info-btn" data-product="Ban" data-price="29.99" data-description="Remove banimento da sua conta."><i class="fa fa-question-circle"></i> Info</button>
+                </div>
+                <span class="featured-tag">EM OFERTA</span>
+              </div>
+              <div class="hidden-product" data-category="liberdade" style="display: none; background-color: #808080;">
+                <div class="product-image">
+                  <img src="media/unmute_placeholder.webp" alt="Unmute">
+                </div>
+                <div class="product-details">
+                  <h4>Unmute</h4>
+                  <p class="product-price">R$ 19,99</p>
+                </div>
+                <div class="product-actions">
+                  <button class="buy-btn" data-product="Unmute" data-price="19.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="info-btn" data-product="Unmute" data-price="19.99" data-description="Remove mudo da sua conta."><i class="fa fa-question-circle"></i> Info</button>
+                </div>
+                <span class="featured-tag">EM OFERTA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="copyright_div">
+      <a class="copyright">Todos os direitos reservados - LORDHUBMCDjado © 2025</a>
+    </footer>
+
+    <!-- Aba do Carrinho -->
+    <div id="cart-overlay" class="cart-overlay">
+      <div class="cart-content">
+        <h2><i class="fa fa-star"></i> Carrinho</h2>
+        <p class="empty-cart" id="cart-empty">Nenhum produto encontrado no seu carrinho.</p>
+        <div id="cart-items"></div>
+        <button class="explore-btn" id="explore-store"><i class="fa fa-shopping-basket"></i> Explorar loja</button>
+        <div class="coupon-input">
+          <input type="text" id="coupon-code" placeholder="Tem um cupom de desconto?">
+          <button id="apply-coupon">Aplicar</button>
+          <p class="coupon-message coupon-success" id="coupon-success">Cupom usado com sucesso!</p>
+          <p class="coupon-message coupon-error" id="coupon-error">Cupom inválido ou já resgatado!</p>
+        </div>
+        <div class="user-inputs">
+          <label for="user-gmail">Gmail:</label>
+          <input type="email" id="user-gmail" placeholder="Seu e-mail do Gmail" required>
+          <label for="minecraft-nick">Nick do Minecraft:</label>
+          <input type="text" id="minecraft-nick" placeholder="Seu nick do Minecraft" required>
+          <label for="discord-nick">Nick do Discord:</label>
+          <input type="text" id="discord-nick" placeholder="Seu nick do Discord" required>
+        </div>
+        <div class="total" id="cart-total">Valor total: R$ 0,00</div>
+        <button class="checkout-btn" id="checkout-btn"><i class="fa fa-shopping-cart"></i> Finalizar compra</button>
+      </div>
+    </div>
+
+    <!-- Aba de Informações do Produto -->
+    <div id="info-overlay" class="info-overlay">
+      <div class="info-content">
+        <h2><i class="fa fa-question-circle"></i> Informações do Produto</h2>
+        <div id="info-details"></div>
+        <button class="close-btn" id="close-info"><i class="fa fa-times"></i> Fechar</button>
+      </div>
+    </div>
+
+    <!-- Botão de Chat e elementos relacionados -->
+    <button class="chat-button" onclick="toggleChat()">🗨️</button>
+    <div class="chat-menu" id="chat-menu">
+      <img src="media/favicon.png" alt="Chat Icon">
+      <p>📩 Precisa de ajuda?</p>
+      <p>Você pode entrar em contato com a nossa equipe de duas formas:</p>
+      <p>🔹 Pelo Gmail: <a href="mailto:lordhubloja@gmail.com">lordhubloja@gmail.com</a></p>
+      <p>🔹 Ou iniciar um papo com a gente clicando em "Iniciar Chat" aqui mesmo!</p>
+      <p>Estamos prontos pra te ajudar no que precisar!</p>
+      <button onclick="showChatForm()">Iniciar Papo</button>
+    </div>
+    <div class="chat-form" id="chat-form">
+      <input type="email" id="chat-gmail" placeholder="Digite seu Gmail">
+      <input type="text" id="chat-name" placeholder="Digite seu nome">
+      <button onclick="startChat()">Iniciar</button>
+    </div>
+    <div class="chat-window" id="chat-window">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input">
+        <input type="text" id="chat-message" placeholder="Digite sua mensagem">
+        <button onclick="sendMessage()">Enviar</button>
+        <button class="end-chat-btn" onclick="endChat()">Finalizar</button>
+      </div>
+    </div>
+
+    <script>
+      let currentChatId = localStorage.getItem('currentChatId') ? parseInt(localStorage.getItem('currentChatId')) : null;
+
+      $(document).ready(function() {
+        // Configuração do Mercado Pago
+        const mp = new MercadoPago('APP_USR-e9b0cad1-d0da-4052-b30c-697a94eaae57', {
+          locale: 'pt-BR'
+        });
+
+        // Exibir Beta Eterno, VIP e Ultra por padrão ao carregar a página
+        $('#product-display').css('display', 'flex');
+        $('.hidden-product[data-category="ranks"]').css('display', 'flex');
+        $('.hidden-product[data-category="liberdade"]').hide();
+
+        // Lógica para alternar categorias ao clicar
+        $('.category-item').on('click', function() {
+          $('.category-item').removeClass('active-category');
+          $(this).addClass('active-category');
+
+          var category = $(this).data('category');
+          $('.featured-product, .hidden-product').hide();
+          if (category === 'ranks') {
+            $('#product-display').css('display', 'flex');
+            $('.hidden-product[data-category="ranks"]').css('display', 'flex');
+          } else if (category === 'liberdade') {
+            $('.hidden-product[data-category="liberdade"]').css('display', 'flex');
+          }
+        });
+
+        // Carrinho
+        let cart = [];
+        let discountApplied = false;
+
+        $('.buy-btn').on('click', function() {
+          const product = $(this).data('product');
+          const price = parseFloat($(this).data('price'));
+          const item = cart.find(item => item.product === product);
+          if (item) {
+            item.quantity += 1;
+          } else {
+            cart.push({ product, price, quantity: 1 });
+          }
+          updateCart();
+
+          // Notificação de item adicionado abaixo do nome do produto
+          const productDetails = $(this).closest('.featured-product, .hidden-product').find('.product-details h4');
+          const notification = $('<div>', { class: 'buy-notification' })
+            .text(`Comprei o ${product}`);
+          productDetails.after(notification);
+          notification.css({
+            top: productDetails.position().top + productDetails.outerHeight(),
+            left: productDetails.position().left
+          }).fadeIn();
+          setTimeout(function() {
+            notification.fadeOut(400, function() {
+              $(this).remove();
+            });
+          }, 800);
+        });
+
+        // Lógica para o botão Info
+        $('.info-btn').on('click', function() {
+          const product = $(this).data('product');
+          const price = $(this).data('price');
+          const description = $(this).data('description');
+          $('#info-details').html(`
+            <p><strong>Produto:</strong> ${product}</p>
+            <p><strong>Preço:</strong> R$ ${price.toFixed(2)}</p>
+            <p><strong>Descrição:</strong> ${description}</p>
+          `);
+          $('#info-overlay').css('display', 'block');
+        });
+
+        $('#cart-link').on('click', function(e) {
+          e.preventDefault();
+          $('#cart-overlay').css('display', 'block');
+          updateCart();
+        });
+
+        $('#explore-store').on('click', function() {
+          $('#cart-overlay').css('display', 'none');
+        });
+
+        $('#close-info').on('click', function() {
+          $('#info-overlay').css('display', 'none');
+        });
+
+        $('#checkout-btn').on('click', function() {
+          if (cart.length === 0) {
+            alert('Seu carrinho está vazio!');
+            return;
+          }
+
+          // Validar campos de entrada do usuário
+          const gmail = $('#user-gmail').val().trim();
+          const minecraftNick = $('#minecraft-nick').val().trim();
+          const discordNick = $('#discord-nick').val().trim();
+          if (!gmail || !minecraftNick || !discordNick) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+          }
+
+          // Mostrar loading
+          $(this).html('<i class="fa fa-spinner fa-spin"></i> Processando...').prop('disabled', true);
+
+          // Preparar itens para o Mercado Pago
+          const items = cart.map(item => ({
+            title: item.product,
+            unit_price: item.price,
+            quantity: item.quantity,
+            currency_id: 'BRL'
+          }));
+
+          // Aplicar desconto se houver cupom válido
+          let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+          if (discountApplied) {
+            total = total * 0.9; // Aplica 10% de desconto
+          }
+
+          // Salvar pedido no localStorage
+          const order = {
+            id: Date.now(),
+            items: cart,
+            total: total.toFixed(2),
+            gmail,
+            minecraftNick,
+            discordNick,
+            date: new Date().toLocaleString('pt-BR')
+          };
+          let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+          orders.push(order);
+          localStorage.setItem('orders', JSON.stringify(orders));
+
+          // Criar preferência de pagamento
+          fetch("https://api.mercadopago.com/checkout/preferences", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer APP_USR-3894547487533659-061112-05d3306703a190e0bed9e4921aebefa2-1868956497"
+            },
+            body: JSON.stringify({
+              items: items,
+              back_urls: {
+                success: window.location.href,
+                failure: window.location.href,
+                pending: window.location.href
+              },
+              auto_return: "approved",
+              statement_descriptor: "LORDHUB STORE"
+            })
+          })
+          .then(response => response.json())
+          .then(preference => {
+            // Redirecionar para o checkout do Mercado Pago
+            window.location.href = preference.init_point;
+          })
+          .catch(error => {
+            console.error("Erro ao criar checkout:", error);
+            alert("Erro ao processar o pagamento. Tente novamente.");
+            $('#checkout-btn').html('<i class="fa fa-shopping-cart"></i> Finalizar compra').prop('disabled', false);
+          });
+        });
+
+        // Fechar carrinho ou info ao clicar fora
+        $(document).on('click', function(e) {
+          if (!$(e.target).closest('.cart-content').length && !$(e.target).is('#cart-link') && !$(e.target).closest('.info-content').length && !$(e.target).is('.info-btn')) {
+            $('#cart-overlay').css('display', 'none');
+            $('#info-overlay').css('display', 'none');
+          }
+        });
+
+        // Aplicar cupom
+        $('#apply-coupon').on('click', function() {
+          const couponCode = $('#coupon-code').val().trim();
+          const couponSuccess = $('#coupon-success');
+          const couponError = $('#coupon-error');
+
+          if (couponCode === 'LORDHUB10' && !discountApplied) {
+            discountApplied = true;
+            updateCart();
+            couponSuccess.show();
+            couponError.hide();
+            setTimeout(function() {
+              couponSuccess.hide();
+            }, 2000);
+          } else if (discountApplied) {
+            couponError.text('Cupom já resgatado!').show();
+            couponSuccess.hide();
+            setTimeout(function() {
+              couponError.hide();
+            }, 2000);
+          } else {
+            couponError.text('Cupom inválido ou já resgatado!').show();
+            couponSuccess.hide();
+            setTimeout(function() {
+              couponError.hide();
+            }, 2000);
+          }
+        });
+
+        function updateCart() {
+          const cartItems = $('#cart-items');
+          cartItems.empty();
+          let total = 0;
+
+          if (cart.length === 0) {
+            $('#cart-empty').show();
+            $('#cart-total').text('Valor total: R$ 0,00');
+            $('#checkout-btn').prop('disabled', true);
+          } else {
+            $('#cart-empty').hide();
+            cart.forEach((item, index) => {
+              const itemTotal = item.price * item.quantity;
+              total += itemTotal;
+              cartItems.append(`
+                <p>${item.product} - R$ ${item.price.toFixed(2)} x ${item.quantity} = R$ ${(itemTotal).toFixed(2)}
+                  <span class="remove-item" data-index="${index}"><i class="fa fa-times"></i></span></p>
+              `);
+            });
+
+            // Aplicar desconto de 10% se o cupom for válido
+            if (discountApplied) {
+              const discount = total * 0.10;
+              total -= discount;
+              $('#cart-total').text(`Valor total: R$ ${total.toFixed(2)} (Desconto de 10%: -R$ ${discount.toFixed(2)})`);
+            } else {
+              $('#cart-total').text(`Valor total: R$ ${total.toFixed(2)}`);
+            }
+            $('#checkout-btn').prop('disabled', false);
+
+            // Remover item do carrinho
+            $('.remove-item').off('click').on('click', function() {
+              const index = $(this).data('index');
+              cart.splice(index, 1);
+              updateCart();
+            });
+          }
+        }
+
+        // Inicializar chat
+        loadChat();
+        $(window).on('storage', function(e) {
+          if (e.originalEvent.key === 'chats' && currentChatId) {
+            loadChat();
+          }
+        });
+      });
+
+      // Funções do chat
+      function toggleChat() {
+        const menu = $('#chat-menu');
+        const form = $('#chat-form');
+        const window = $('#chat-window');
+        if (menu.is(':visible') || form.is(':visible') || window.is(':visible')) {
+          menu.hide();
+          form.hide();
+          window.hide();
+        } else {
+          menu.show();
+          const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            window.show();
+            loadChat();
+          }
+        }
+      }
+
+      function showChatForm() {
+        $('#chat-menu').hide();
+        $('#chat-form').show();
+      }
+
+      function startChat() {
+        const gmail = $('#chat-gmail').val();
+        const name = $('#chat-name').val();
+        if (gmail && name) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chatId = Date.now();
+          chats.push({ id: chatId, gmail, name, messages: [], date: new Date().toLocaleString() });
+          localStorage.setItem('chats', JSON.stringify(chats));
+          localStorage.setItem('currentChatId', chatId);
+          currentChatId = chatId;
+          $('#chat-gmail').val('');
+          $('#chat-name').val('');
+          $('#chat-form').hide();
+          $('#chat-window').show();
+          loadChat();
+        } else {
+          alert('Preencha todos os campos!');
+        }
+      }
+
+      function loadChat() {
+        const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+        const chat = chats.find(c => c.id === currentChatId);
+        if (chat) {
+          $('#chat-messages').empty();
+          chat.messages.forEach(msg => {
+            $('#chat-messages').append(`<p>${msg}</p>`);
+          });
+          $('#chat-window').show();
+          $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+        } else {
+          $('#chat-window').hide();
+          currentChatId = null;
+          localStorage.removeItem('currentChatId');
+        }
+      }
+
+      function sendMessage() {
+        const message = $('#chat-message').val();
+        if (message && currentChatId) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            chat.messages.push(`[Usuário] ${message}`);
+            localStorage.setItem('chats', JSON.stringify(chats));
+            $('#chat-message').val('');
+            loadChat();
+          }
+        }
+      }
+
+      function endChat() {
+        if (currentChatId && confirm('Deseja finalizar esta conversa?')) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          chats = chats.filter(c => c.id !== currentChatId);
+          localStorage.setItem('chats', JSON.stringify(chats));
+          localStorage.removeItem('currentChatId');
+          currentChatId = null;
+          $('#chat-window').hide();
+          $('#chat-menu').hide();
+        }
+      }
+
+      $(document).click(function(e) {
+        if (!$(e.target).closest('.chat-button, .chat-menu, .chat-form, .chat-window').length) {
+          $('#chat-menu').hide();
+          $('#chat-form').hide();
+          $('#chat-window').hide();
+        }
+      });
+    </script>
+  </body>
+</html>
