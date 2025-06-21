@@ -72,7 +72,6 @@
         margin: 0 auto;
         padding: 0;
         border: 0;
-        vertical-align: top;
         position: absolute;
         top: 0;
         left: 0;
@@ -150,19 +149,19 @@
         padding: 10px;
       }
       .banner-stripe-extra.cinza4 {
-        width: 30%;
-        height: 400px;
-        background-color: #0d2a2a;
-        top: 940px;
+        width: 100%;
+        height: 80px;
+        background-color: #222222;
+        top: 1500px;
         border: none;
-        left: 410px;
+        left: 0px;
         z-index: 3;
-        border-radius: 10px;
+        border-radius: 0px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 0 10px;;
+        padding: 0 10px;
       }
       .banner-stripe-extra.cinza img {
         width: 98%;
@@ -232,27 +231,51 @@
         filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
       }
       .stripe-item:hover span {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8));
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
       }
       .loja-item {
         display: flex;
         align-items: center;
         cursor: pointer;
+        transition: transform 0.3s ease, filter 0.3s ease;
+        animation: pulse 2s infinite ease-in-out;
       }
       .loja-item img {
         width: 80px;
         height: 80px;
         margin-right: 10px;
         margin-left: -10px;
+        transition: transform 0.3s ease, filter 0.3s ease;
       }
       .loja-item span {
         color: #FF0000;
         font-size: 2.5em;
         font-weight: bold;
-        transition: text-shadow 0.3s ease;
+        transition: text-shadow 0.3s ease, transform 0.3s ease;
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+      }
+      .loja-item:hover {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
+      }
+      .loja-item:hover img {
+        transform: rotate(15deg);
       }
       .loja-item:hover span {
-        text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+        text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+      }
+      .loja-item:active {
+        animation: bounce 0.3s ease;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      @keyframes bounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.9); }
+        100% { transform: scale(1); }
       }
       .logo-overlay {
         width: 500px;
@@ -474,12 +497,13 @@
           font-size: 0.9em;
         }
         .stripe-item:hover span {
-          text-shadow: 0 0 8px rgba(255, 255, 255, 0.8));
+          text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
         }
         .loja-item img {
           width: 60px;
           height: 60px;
           margin-left: -10px;
+          transition: transform 0.3s ease, filter 0.3s ease;
         }
         .loja-item span {
           font-size: 1.8em;
@@ -605,7 +629,7 @@
           </div>
         </div>
       </div>
-      <div class="banner-stripe-extra cinza4"></div>
+      <div class="banner-stripe-extra cinza4">© 2025 LORDHUB. Todos os direitos reservados.</div>
       <img src="media/logo.png" alt="Logo" class="logo-overlay" onclick="location.reload();">
       <button class="copy-button">COPIAR IP</button>
       <div class="discord-container">
@@ -619,7 +643,7 @@
         <img src="media/mc.png" alt="MC Icon" class="mc-image">
         <div class="discord-texts">
           <a class="discord-link">IP DO SERVIDOR MINECRAFT</a>
-          <span class="discord-subtext">lordhub.com.br</span>
+          <span class="discord-subtext">lorub.com.br</span>
         </div>
       </div>
     </div>
@@ -641,6 +665,7 @@
             e.preventDefault();
             navigator.clipboard.writeText(ipLink.nextElementSibling.textContent).catch(err => {
               console.error("Erro ao copiar: ", err);
+              alert("Erro ao copiar o IP. Por favor, copie manualmente: lorub.com.br");
             });
           });
         }
@@ -693,7 +718,7 @@
           mcSubtext.addEventListener('mouseover', async () => {
             hoverText.textContent = 'Carregando...';
             try {
-              const response = await fetch(`https://api.mcsrvstat.us/2/mush.com.br`);
+              const response = await fetch(`https://api.mcsrvstat.us/2/lorub.com.br`);
               const data = await response.json();
               if (data.players && data.players.online) {
                 hoverText.textContent = `Online: ${data.players.online}`;
@@ -714,13 +739,14 @@
         const copyButton = document.querySelector('.copy-button');
         if (copyButton) {
           copyButton.addEventListener('click', () => {
-            navigator.clipboard.writeText('lordhub.com.br').then(() => {
+            navigator.clipboard.writeText('lorub.com.br').then(() => {
               copyButton.textContent = 'COPIADO';
               setTimeout(() => {
                 copyButton.textContent = 'COPIAR IP';
               }, 2000);
             }).catch(err => {
               console.error('Erro ao copiar: ', err);
+              alert("Erro ao copiar o IP. Por favor, copie manualmente: lorub.com.br");
             });
           });
         }
@@ -786,9 +812,9 @@
         });
 
         // Redirecionar para loja.html ao clicar no texto "LOJA"
-        const lojaSpan = document.querySelector('.loja-item span');
-        if (lojaSpan) {
-          lojaSpan.addEventListener('click', () => {
+        const lojaItem = document.querySelector('.loja-item');
+        if (lojaItem) {
+          lojaItem.addEventListener('click', () => {
             window.location.href = 'loja.html';
           });
         }
@@ -799,7 +825,7 @@
         const serverTime = document.getElementById('server-time');
         async function updateServerStatus() {
           try {
-            const response = await fetch('https://api.mcsrvstat.us/2/mush.com.br');
+            const response = await fetch('https://api.mcsrvstat.us/2/lorub.com.br');
             const data = await response.json();
             if (serverStatus && serverVersion && serverTime) {
               if (data.online) {
