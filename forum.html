@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="media/style.css">
     <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
     <style>
       body {
         background: linear-gradient(135deg, #1F252A, #2D3339);
@@ -366,6 +369,19 @@
       </div>
     </div>
     <script>
+      // Initialize Firebase
+      const firebaseConfig = {
+        // Substitua com suas credenciais do Firebase
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_PROJETO.firebaseapp.com",
+        projectId: "SEU_PROJETO",
+        storageBucket: "SEU_PROJETO.appspot.com",
+        messagingSenderId: "SEU_SENDER_ID",
+        appId: "SUA_APP_ID"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
       // Initialize chat ID from localStorage
       let currentChatId = localStorage.getItem('currentChatId') ? parseInt(localStorage.getItem('currentChatId')) : null;
 
@@ -376,8 +392,6 @@
         $(window).on('storage', function(e) {
           if (e.originalEvent.key === 'chats' && currentChatId) {
             loadChat();
-          } else if (e.originalEvent.key === 'posts') {
-            displayPosts();
           }
         });
       });
@@ -433,26 +447,596 @@
         return html;
       }
 
-      // Display posts from localStorage
-      function displayPosts() {
+      // Display posts from Firestore
+      async function displayPosts() {
         const postsList = $('#posts-list');
         const noPostsMsg = $('#no-posts-msg');
         postsList.empty();
-        const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-        if (posts.length === 0) {
-          noPostsMsg.show();
-        } else {
-          noPostsMsg.hide();
-          posts.forEach(post => {
-            const formattedText = parseMarkdown(post.text);
-            postsList.append(`
-              <div class="post">
-                <h3>${post.title}</h3>
-                <p><strong>Data:</strong> ${post.date}</p>
-                <div class="post-content">${formattedText}</div>
-              </div>
-            `);
+        try {
+          const snapshot = await db.collection('posts').orderBy('date', 'desc').get();
+          const posts = [];
+          snapshot.forEach(doc => {
+            posts.push({ id: doc.id, ...doc.data() });
           });
+          if (posts.length === 0) {
+            noPostsMsg.show();
+          } else {
+            noPostsMsg.hide();
+            posts.forEach(post => {
+              const formattedText = parseMarkdown(post.text);
+              postsList.append(`
+                <div class="post">
+                  <h3>${post.title}</h3>
+                  <p><strong>Data:</strong> ${post.date}</p>
+                  <div class="post-content">${formattedText}</div>
+                </div>
+              `);
+            });
+          }
+        } catch (error) {
+          console.error("Erro ao buscar posts:", error);
+          noPostsMsg.show();
+        }
+      }
+
+      // Toggle chat menu
+      function toggleChat() {
+        const menu = $('#chat-menu');
+        const form = $('#chat-form');
+        const window = $('#chat-window');
+        if (menu.is(':visible') || form.is(':visible') || window.is(':visible')) {
+          menu.hide();
+          form.hide();
+          window.hide();
+        } else {
+          menu.show();
+          const chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chat = chats.find(c => c.id === currentChatId);
+          if (chat) {
+            window.show();
+            loadChat();
+          }
+        }
+      }
+
+      // Show chat form
+      function showChatForm() {
+        $('#chat-menu').hide();
+        $('#chat-form').show();
+      }
+
+      // Start a new chat
+      function startChat() {
+        const gmail = $('#chat-gmail').val();
+        const name = $('#chat-name').val();
+        if (gmail && name) {
+          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
+          const chatId = Date.now();
+          chats.push({ id: chatId, gmail, name, messages: [], date: new Date().toLocaleString() });
+          localStorage.setItem('chats', JSON.stringify(chats));
+          localStorage.setItem('currentChatId', chatId);
+          currentChatId = chat évident
+
+System: You are Grok 3 built by xAI.
+
+The issue you're facing is that posts created in `adm.html` only appear in `forum.html` on your browser and not on other browsers or devices. This is because your code uses `localStorage` to store posts, which is browser-specific and not shared across different browsers or devices. To make posts visible to all users, you need a server-side solution to store and retrieve data, such as a database or backend API. Below, I’ll explain the issue in detail, provide a solution using Firebase Firestore, and share the updated, complete code for both `forum.html` and `adm.html`.
+
+---
+
+### **Problem and Solution**
+
+**Problem**:
+- Your current code stores posts in `localStorage`, which is local to the browser instance. When you create a post in `adm.html`, it’s saved in your browser’s `localStorage` and displayed in `forum.html` only in that browser. Other browsers or devices have their own empty `localStorage`, so they don’t see the posts.
+- `localStorage` is not a shared storage solution and cannot synchronize data across users or devices.
+
+**Solution**:
+- Replace `localStorage` with a server-side database to store posts, making them accessible to all users.
+- Use **Firebase Firestore**, a cloud-based NoSQL database, for simplicity and ease of integration with your existing JavaScript code.
+- Modify `adm.html` to send posts to Firestore and `forum.html` to retrieve posts from Firestore.
+- Keep the chat functionality using `localStorage` for now, as it seems to be user-specific, but you can extend the Firebase solution to chats if needed.
+
+**Steps to Implement**:
+1. Set up a Firebase project and add Firestore.
+2. Include Firebase SDK in your HTML files.
+3. Update the JavaScript in `adm.html` to save posts to Firestore.
+4. Update the JavaScript in `forum.html` to fetch posts from Firestore.
+5. Ensure the UI and functionality remain consistent with your original design.
+
+---
+
+### **Firebase Setup**
+1. Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+2. Enable Firestore in the “Build” section.
+3. Create a Firestore database in **Test Mode** for development (you can secure it later with Firestore rules).
+4. Get your Firebase configuration object (found in Project Settings > General > Your Apps > Add App > Web).
+5. Replace the placeholder `firebaseConfig` in the code below with your actual Firebase configuration.
+
+---
+
+### **Updated Code**
+
+Below are the complete, updated codes for `forum.html` and `adm.html`, modified to use Firebase Firestore for post storage. The chat functionality remains unchanged, using `localStorage`, but you can extend Firebase to chats if needed.
+
+#### **forum.html**
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORDHUB - Fórum</title>
+    <link rel="icon" type="image/png" href="media/favicon.png">
+    <link rel="stylesheet" href="media/style.css">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #1F252A, #2D3339);
+        color: #fff;
+        font-family: 'Space Grotesk', sans-serif;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .desktop_navbar, .mobile_navbar {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(244, 162, 97, 0.3);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .desktop_navbar_link, .mobile_navbar_link {
+        color: #808080;
+        margin: 0 15px;
+        text-decoration: none;
+        transition: color 0.3s, transform 0.3s;
+        position: relative;
+      }
+      .desktop_navbar_link:hover, .mobile_navbar_link:hover {
+        color: #F4A261;
+        transform: scale(1.1);
+      }
+      .desktop_navbar_link::after, .mobile_navbar_link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #F4A261;
+        transition: width 0.3s;
+      }
+      .desktop_navbar_link:hover::after, .mobile_navbar_link:hover::after {
+        width: 100%;
+      }
+      .dropdown-content a::after {
+        display: none;
+      }
+      .mainflex {
+        min-height: calc(100vh - 4rem);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex: 1;
+        margin-top: 100px;
+      }
+      .main6 {
+        width: 80%;
+        max-width: 800px;
+      }
+      .full-width-banner {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: none;
+        position: relative;
+        top: 60px;
+        z-index: 900;
+      }
+      .full-width-banner img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+      }
+      .post {
+        background: rgba(45, 51, 57, 0.8);
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        animation: fadeIn 1s ease-in;
+        border-left: 5px solid #F4A261;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .post h3 {
+        color: #F4A261;
+        margin: 0 0 10px;
+        text-transform: uppercase;
+        font-size: 1.5em;
+      }
+      .post p {
+        color: #B0B0B0;
+        line-height: 1.6;
+      }
+      .no-posts {
+        text-align: center;
+        color: #B0B0B0;
+        font-style: italic;
+        background: rgba(45, 51, 57, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+      }
+      .copyright_div {
+        background: rgba(45, 51, 57, 0.9);
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        box-shadow: 0 -2px 10px rgba(244, 162, 97, 0.3);
+      }
+      .copyright {
+        color: #B0B0B0;
+        margin: 0;
+        font-size: 0.9em;
+      }
+      .post-content h3 {
+        color: #F4A261;
+        font-size: 1.3em;
+        margin: 15px 0 10px;
+      }
+      .post-content strong {
+        font-weight: bold;
+        color: #fff;
+      }
+      .post-content em {
+        font-style: italic;
+      }
+      .post-content ul {
+        list-style-type: disc;
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .post-content ul li {
+        color: #B0B0B0;
+        margin-bottom: 5px;
+      }
+      .post-content p {
+        margin: 10px 0;
+        color: #B0B0B0;
+      }
+      .chat-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #007BFF;
+        border-radius: 50%;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        z-index: 1000;
+      }
+      .chat-menu {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        text-align: left;
+        color: #B0B0B0;
+        width: 250px;
+      }
+      .chat-menu img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+      }
+      .chat-menu p {
+        margin: 5px 0;
+      }
+      .chat-menu a {
+        color: #007BFF;
+        text-decoration: none;
+      }
+      .chat-menu a:hover {
+        text-decoration: underline;
+      }
+      .chat-menu button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-form {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+      .chat-form input {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-form button {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .chat-window {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: rgba(45, 51, 57, 0.9);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .chat-messages {
+        height: 80%;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      .chat-messages p {
+        margin: 5px 0;
+        padding: 5px;
+        background: #3A4046;
+        border-radius: 5px;
+      }
+      .chat-input {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #3A4046;
+        color: #fff;
+      }
+      .chat-input button {
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+        background: #007BFF;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-input .end-chat-btn {
+        background: linear-gradient(45deg, #FF0000, #CC0000);
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <nav class="desktop_navbar">
+      <a href="index.html"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <a href="index.html" class="desktop_navbar_link scroll"><i class="fa fa-info-circle"></i> Inicio</a>
+      <a href="equipe.html" class="desktop_navbar_link"><i class="fa fa-users"></i> Equipe</a>
+      <a href="loja.html" class="desktop_navbar_link"><i class="fa fa-shopping-cart"></i> Loja</a>
+      <a href="forum.html" class="desktop_navbar_link"><i class="fa fa-comments"></i> Fórum</a>
+      <div class="dropdown">
+        <a href="#" class="desktop_navbar_link dropdown-toggle"><i class="fa fa-book"></i> Outros</a>
+        <div class="dropdown-content">
+          <a href="doacao.html" class="desktop_navbar_link">Doação</a>
+          <a href="diretrizes.html" class="desktop_navbar_link">Diretrizes</a>
+          <a href="cps.html" class="desktop_navbar_link">CPS</a>
+        </div>
+      </div>
+    </nav>
+    <div class="mobile_navbar">
+      <a href="index.html" class="mobile_navbar_logo_img_a"><img class="mobile_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
+      <div id="mobile_navbar_links" style="display: none;">
+        <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="index.html"><i class="fa fa-info-circle"></i> Inicio</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="equipe.html"><i class="fa fa-users"></i> Equipe</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="loja.html"><i class="fa fa-shopping-cart"></i> Loja</a>
+        <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="forum.html"><i class="fa fa-comments"></i> Fórum</a>
+        <div class="dropdown">
+          <a class="mobile_navbar_link dropdown-toggle" onclick="mobile_navbar_link_hider()" href="#"><i class="fa fa-book"></i> Outros</a>
+          <div class="dropdown-content">
+            <a href="doacao.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Doação</a>
+            <a href="diretrizes.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">Diretrizes</a>
+            <a href="cps.html" class="mobile_navbar_link" onclick="mobile_navbar_link_hider()">CPS</a>
+          </div>
+        </div>
+      </div>
+      <div class="icon" onclick="mobile_navbar_link_hider()">
+        <i class="fa fa-bars"></i>
+      </div>
+    </div>
+    <div class="full-width-banner">
+      <img src="media/banner-forum.jpg" alt="Banner do Fórum LordHub">
+    </div>
+    <div class="mainflex">
+      <div class="main6">
+        <div id="posts-list"></div>
+        <p class="no-posts" id="no-posts-msg">Nenhum post disponível no momento.</p>
+      </div>
+    </div>
+    <footer class="copyright_div">
+      <a class="copyright">Todos os direitos reservados - LORDHUBMC © 2025</a>
+    </footer>
+    <button class="chat-button" onclick="toggleChat()">🗨️</button>
+    <div class="chat-menu" id="chat-menu">
+      <img src="media/favicon.png" alt="Chat Icon">
+      <p>📩 Precisa de ajuda?</p>
+      <p>Você pode entrar em contato com a nossa equipe de duas formas:</p>
+      <p>🔹 Pelo Gmail: <a href="mailto:lordhubloja@gmail.com">lordhubloja@gmail.com</a></p>
+      <p>🔹 Ou iniciar um papo com a gente clicando em "Iniciar Chat" aqui mesmo!</p>
+      <p>Estamos prontos pra te ajudar no que precisar!</p>
+      <button onclick="showChatForm()">Iniciar Papo</button>
+    </div>
+    <div class="chat-form" id="chat-form">
+      <input type="email" id="chat-gmail" placeholder="Digite seu Gmail">
+      <input type="text" id="chat-name" placeholder="Digite seu nome">
+      <button onclick="startChat()">Iniciar</button>
+    </div>
+    <div class="chat-window" id="chat-window">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input">
+        <input type="text" id="chat-message" placeholder="Digite sua mensagem">
+        <button onclick="sendMessage()">Enviar</button>
+        <button class="end-chat-btn" onclick="endChat()">Finalizar</button>
+      </div>
+    </div>
+    <script>
+      // Initialize Firebase
+      const firebaseConfig = {
+        // Replace with your Firebase configuration
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      // Initialize chat ID from localStorage
+      let currentChatId = localStorage.getItem('currentChatId') ? parseInt(localStorage.getItem('currentChatId')) : null;
+
+      $(document).ready(function() {
+        displayPosts();
+        loadChat();
+        // Listen for storage changes to sync chats across tabs
+        $(window).on('storage', function(e) {
+          if (e.originalEvent.key === 'chats' && currentChatId) {
+            loadChat();
+          }
+        });
+      });
+
+      // Toggle mobile navbar links
+      function mobile_navbar_link_hider() {
+        var x = document.getElementById("mobile_navbar_links");
+        x.style.display = x.style.display === "flex" ? "none" : "flex";
+      }
+
+      // Parse markdown text to HTML
+      function parseMarkdown(text) {
+        let lines = text.split('\n').filter(line => line.trim() !== '');
+        let html = '';
+        let inList = false;
+
+        lines.forEach(line => {
+          if (line.startsWith('### ')) {
+            if (inList) {
+              html += '</ul>';
+              inList = false;
+            }
+            html += `<h3>${line.slice(4)}</h3>`;
+            return;
+          }
+
+          if (line.startsWith('* ')) {
+            if (!inList) {
+              html += '<ul>';
+              inList = true;
+            }
+            html += `<li>${line.slice(2)}</li>`;
+            return;
+          }
+
+          if (inList) {
+            html += '</ul>';
+            inList = false;
+          }
+
+          line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+          if (line.trim()) {
+            html += `<p>${line}</p>`;
+          }
+        });
+
+        if (inList) {
+          html += '</ul>';
+        }
+
+        return html;
+      }
+
+      // Display posts from Firestore
+      async function displayPosts() {
+        const postsList = $('#posts-list');
+        const noPostsMsg = $('#no-posts-msg');
+        postsList.empty();
+        try {
+          const snapshot = await db.collection('posts').orderBy('date', 'desc').get();
+          const posts = [];
+          snapshot.forEach(doc => {
+            posts.push({ id: doc.id, ...doc.data() });
+          });
+          if (posts.length === 0) {
+            noPostsMsg.show();
+          } else {
+            noPostsMsg.hide();
+            posts.forEach(post => {
+              const formattedText = parseMarkdown(post.text);
+              postsList.append(`
+                <div class="post">
+                  <h3>${post.title}</h3>
+                  <p><strong>Data:</strong> ${post.date}</p>
+                  <div class="post-content">${formattedText}</div>
+                </div>
+              `);
+            });
+          }
+        } catch (error) {
+          console.error("Erro ao buscar posts:", error);
+          noPostsMsg.show();
         }
       }
 
