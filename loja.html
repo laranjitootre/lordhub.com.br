@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="media/style.css">
     <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- SDK do Mercado Pago -->
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
     <style>
       /* Adicionando borda laranja no hover */
       .featured-product:hover, .hidden-product:hover {
@@ -65,15 +63,17 @@
         background-color: #D88C00; /* Laranja mais escuro ao hover */
       }
 
-      /* Estilizando a imagem do título */
+      /* Estilizando a imagem do título - Correção para evitar bugs */
       .store-category img {
         max-width: 100%;
         height: auto;
         margin-bottom: 10px;
+        object-fit: contain; /* Garante que a imagem não seja distorcida ou cortada */
+        max-height: 220px; /* Limita a altura para evitar overflow */
       }
 
-      /* Estilizando a aba do carrinho e info */
-      .cart-overlay, .info-overlay {
+      /* Estilizando a aba de info */
+      .info-overlay {
         display: none;
         position: fixed;
         top: 0;
@@ -84,7 +84,7 @@
         z-index: 1000;
       }
 
-      .cart-content, .info-content {
+      .info-content {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -97,28 +97,23 @@
         font-family: 'Space Grotesk', sans-serif;
       }
 
-      .cart-content h2, .info-content h2 {
+      .info-content h2 {
         color: #8A2BE2;
         margin-bottom: 10px;
         display: flex;
         align-items: center;
       }
 
-      .cart-content h2 i, .info-content h2 i {
+      .info-content h2 i {
         margin-right: 5px;
       }
 
-      .cart-content p, .info-content p {
+      .info-content p {
         margin: 10px 0;
         color: #B0B0B0;
       }
 
-      .cart-content .empty-cart {
-        text-align: center;
-        color: #B0B0B0;
-      }
-
-      .cart-content .explore-btn, .info-content .close-btn {
+      .info-content .close-btn {
         background-color: #8A2BE2;
         color: white;
         border: none;
@@ -131,78 +126,24 @@
         margin-top: 10px;
       }
 
-      .cart-content .explore-btn i, .info-content .close-btn i {
+      .info-content .close-btn i {
         margin-right: 5px;
       }
 
-      .cart-content .explore-btn:hover, .info-content .close-btn:hover {
+      .info-content .close-btn:hover {
         background-color: #6A1AB6;
       }
 
-      .cart-content .coupon-input {
-        display: flex;
-        margin-top: 10px;
-      }
-
-      .cart-content .coupon-input input {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 5px 0 0 5px;
-        background-color: #2D3339;
-        color: #fff;
-      }
-
-      .cart-content .coupon-input button {
-        background-color: #8A2BE2;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 0 5px 5px 0;
-        cursor: pointer;
-      }
-
-      .cart-content .coupon-input button:hover {
-        background-color: #6A1AB6;
-      }
-
-      .cart-content .total {
-        margin-top: 20px;
-        color: #8A2BE2;
-      }
-
-      .cart-content .checkout-btn {
-        background-color: #8A2BE2;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 10px;
-        width: 100%;
-      }
-
-      .cart-content .checkout-btn i {
-        margin-right: 5px;
-      }
-
-      .cart-content .checkout-btn:hover {
-        background-color: #6A1AB6;
-      }
-
-      /* Centralizando o botão Carrinho verticalmente */
+      /* Centralizando a categoria verticalmente */
       .store-sidebar {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
         height: 100%;
-        min-height: 200px; /* Ajuste conforme necessário */
+        min-height: 200px;
       }
 
-      .store-category, .store-banner {
+      .store-category {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -210,11 +151,7 @@
         text-align: center;
       }
 
-      .store-banner a {
-        margin-top: auto; /* Empurra o botão para o centro ou base */
-      }
-
-      /* Estilizando a notificação de item adicionado */
+      /* Estilizando a notificação de compra */
       .buy-notification {
         position: absolute;
         background-color: #2D3339;
@@ -226,52 +163,65 @@
         z-index: 1001;
       }
 
-      /* Estilizando mensagens de cupom */
-      .coupon-message {
-        font-size: 14px;
-        margin-top: 5px;
+      /* Estilizando a tabela de benefícios */
+      .rank-benefits-container {
         display: none;
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+        background: linear-gradient(135deg, #2D3339, #1F252A);
+        padding: 20px 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        border-radius: 0;
       }
 
-      .coupon-success {
-        color: #00FF00; /* Verde para sucesso */
-      }
-
-      .coupon-error {
-        color: #FF0000; /* Vermelho para erro */
-      }
-
-      /* Estilizando o botão de remoção de item */
-      .remove-item {
-        color: #FF0000;
-        font-size: 16px;
-        cursor: pointer;
-        margin-left: 10px;
-      }
-
-      /* Ajustando o layout dos botões na área de ações */
-      .product-actions {
-        display: flex;
-        align-items: center;
-      }
-
-      /* Estilizando os campos de entrada do usuário */
-      .user-inputs {
-        margin-top: 15px;
-      }
-      .user-inputs label {
+      .rank-benefits-container.ranks-active {
         display: block;
-        margin-bottom: 5px;
-        color: #B0B0B0;
       }
-      .user-inputs input {
+
+      .rank-benefits {
         width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
+        max-width: 1200px;
+        margin: 0 auto;
+        border-collapse: collapse;
         background-color: #2D3339;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .rank-benefits th, .rank-benefits td {
+        padding: 15px;
+        text-align: center;
+        border: 1px solid #4A4A4A;
         color: #fff;
-        margin-bottom: 10px;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+
+      .rank-benefits th {
+        background-color: #8A2BE2;
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .rank-benefits td {
+        background-color: #2D3339;
+      }
+
+      .rank-benefits tr:hover td {
+        background-color: #3A4046;
+      }
+
+      .rank-benefits .discord-only {
+        color: #B0B0B0;
+        font-style: italic;
+        font-weight: bold;
+      }
+
+      .rank-benefits tr.discord-row {
+        background-color: #5865F2;
+        color: #fff;
       }
 
       body {
@@ -284,12 +234,14 @@
         display: flex;
         flex-direction: column;
       }
+
       .desktop_navbar, .mobile_navbar {
         background: rgba(45, 51, 57, 0.9);
         padding: 10px;
         border-radius: 10px;
         box-shadow: 0 0 15px rgba(244, 162, 97, 0.3);
       }
+
       .desktop_navbar_link, .mobile_navbar_link {
         color: #808080;
         margin: 0 15px;
@@ -297,10 +249,12 @@
         transition: color 0.3s, transform 0.3s;
         position: relative;
       }
+
       .desktop_navbar_link:hover, .mobile_navbar_link:hover {
         color: #F4A261;
         transform: scale(1.1);
       }
+
       .desktop_navbar_link::after, .mobile_navbar_link::after {
         content: '';
         position: absolute;
@@ -311,16 +265,19 @@
         background: #F4A261;
         transition: width 0.3s;
       }
+
       .desktop_navbar_link:hover::after, .mobile_navbar_link:hover::after {
         width: 100%;
       }
-      /* Removendo o risco laranja apenas do dropdown Outros */
+
       .dropdown-content a::after {
         display: none;
       }
+
       .mainflex {
         flex: 1;
       }
+
       .copyright_div {
         background: rgba(45, 51, 57, 0.9);
         padding: 10px;
@@ -331,19 +288,18 @@
         left: 0;
         box-shadow: 0 -2px 10px rgba(244, 162, 97, 0.3);
       }
+
       .copyright {
         color: #B0B0B0;
         margin: 0;
         font-size: 0.9em;
       }
 
-      /* Estilizando o banner */
       .sobre-banner {
         width: 100%;
-        margin-top: 20px; /* Ajuste para abaixar o banner um pouco */
+        margin-top: 20px;
       }
 
-      /* Estilos do botão de chat */
       .chat-button {
         position: fixed;
         bottom: 20px;
@@ -359,6 +315,7 @@
         box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         z-index: 1000;
       }
+
       .chat-menu {
         display: none;
         position: fixed;
@@ -373,21 +330,26 @@
         color: #B0B0B0;
         width: 250px;
       }
+
       .chat-menu img {
         width: 50px;
         height: 50px;
         margin-bottom: 10px;
       }
+
       .chat-menu p {
         margin: 5px 0;
       }
+
       .chat-menu a {
         color: #007BFF;
         text-decoration: none;
       }
+
       .chat-menu a:hover {
         text-decoration: underline;
       }
+
       .chat-menu button {
         background: #007BFF;
         color: white;
@@ -398,6 +360,7 @@
         cursor: pointer;
         width: 100%;
       }
+
       .chat-form {
         display: none;
         position: fixed;
@@ -409,6 +372,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         z-index: 1000;
       }
+
       .chat-form input {
         width: 100%;
         padding: 8px;
@@ -418,6 +382,7 @@
         background: #3A4046;
         color: #fff;
       }
+
       .chat-form button {
         background: #007BFF;
         color: white;
@@ -427,6 +392,7 @@
         cursor: pointer;
         width: 100%;
       }
+
       .chat-window {
         display: none;
         position: fixed;
@@ -442,22 +408,26 @@
         flex-direction: column;
         justify-content: space-between;
       }
+
       .chat-messages {
         height: 80%;
         overflow-y: auto;
         margin-bottom: 10px;
       }
+
       .chat-messages p {
         margin: 5px 0;
         padding: 5px;
         background: #3A4046;
         border-radius: 5px;
       }
+
       .chat-input {
         display: flex;
         gap: 5px;
         flex-wrap: wrap;
       }
+
       .chat-input input {
         flex: 1;
         padding: 8px;
@@ -466,6 +436,7 @@
         background: #3A4046;
         color: #fff;
       }
+
       .chat-input button {
         padding: 8px;
         border: none;
@@ -474,6 +445,7 @@
         color: white;
         cursor: pointer;
       }
+
       .chat-input .end-chat-btn {
         background: linear-gradient(45deg, #FF0000, #CC0000);
         margin-left: 5px;
@@ -484,7 +456,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <nav class="desktop_navbar">
       <a href="index.html"><img class="desktop_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
-      <a href="index.html#sobre" class="desktop_navbar_link scroll"><i class="fa fa-info-circle"></i> Sobre</a>
+      <a href="index.html" class="desktop_navbar_link scroll"><i class="fa fa-info-circle"></i> Inicio</a>
       <a href="equipe.html" class="desktop_navbar_link"><i class="fa fa-users"></i> Equipe</a>
       <a href="loja.html" class="desktop_navbar_link"><i class="fa fa-shopping-cart"></i> Loja</a>
       <a href="forum.html" class="desktop_navbar_link"><i class="fa fa-comments"></i> Fórum</a>
@@ -500,7 +472,7 @@
     <div class="mobile_navbar">
       <a href="index.html" class="mobile_navbar_logo_img_a"><img class="mobile_navbar_logo_img" src="media/logo_small.png" alt="logo"></a>
       <div id="mobile_navbar_links">
-        <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="index.html#sobre"><i class="fa fa-info-circle"></i> Sobre</a>
+        <a class="mobile_navbar_link scroll" onclick="mobile_navbar_link_hider()" href="index.html"><i class="fa fa-info-circle"></i> Inicio</a>
         <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="equipe.html"><i class="fa fa-users"></i> Equipe</a>
         <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="loja.html"><i class="fa fa-shopping-cart"></i> Loja</a>
         <a class="mobile_navbar_link" onclick="mobile_navbar_link_hider()" href="forum.html"><i class="fa fa-comments"></i> Fórum</a>
@@ -530,25 +502,19 @@
     <div class="mainflex" style="min-height: calc(100vh - 4rem);">
       <div class="main6">
         <div class="sobre-container">
-          <!-- Banner da Loja -->
           <img src="media/banner-loja.jpg" alt="Banner da Loja LordHub" class="sobre-banner">
           <div class="sobre-content">
             <div class="store-sidebar">
-              <!-- Categoria Ranks -->
               <div class="store-category">
                 <img src="media/ranks_icon.png" alt="Ranks Icon">
                 <ul class="category-list">
                   <li class="category-item active-category" data-category="ranks">Ranks</li>
                   <li class="category-item" data-category="liberdade">Liberdade</li>
+                  <li class="category-item" data-category="money">Money</li>
                 </ul>
-              </div>
-              <!-- Carrinho -->
-              <div class="store-banner">
-                <a href="#" class="store-banner-link" id="cart-link">Carrinho</a>
               </div>
             </div>
             <div class="store-products">
-              <!-- Produto em Destaque -->
               <div class="featured-product" id="product-display">
                 <div class="product-image">
                   <img src="media/beta_eterno_placeholder.webp" alt="Beta Eterno">
@@ -558,12 +524,11 @@
                   <p class="product-price">R$ 69,99</p>
                 </div>
                 <div class="product-actions">
-                  <button class="buy-btn" data-product="Beta Eterno" data-price="69.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="buy-btn"><i class="fa fa-shopping-cart"></i> Comprar</button>
                   <button class="info-btn" data-product="Beta Eterno" data-price="69.99" data-description="Acesso vitalício ao Beta Eterno com benefícios exclusivos."><i class="fa fa-question-circle"></i> Info</button>
                 </div>
                 <span class="featured-tag">EM DESTAQUE</span>
               </div>
-              <!-- Produto VIP -->
               <div class="hidden-product" data-category="ranks" style="background-color: #90EE90;">
                 <div class="product-image">
                   <img src="media/vip_placeholder.webp" alt="VIP">
@@ -573,12 +538,11 @@
                   <p class="product-price">R$ 49,99</p>
                 </div>
                 <div class="product-actions">
-                  <button class="buy-btn" data-product="VIP" data-price="49.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="buy-btn"><i class="fa fa-shopping-cart"></i> Comprar</button>
                   <button class="info-btn" data-product="VIP" data-price="49.99" data-description="Rank VIP com vantagens especiais por 30 dias."><i class="fa fa-question-circle"></i> Info</button>
                 </div>
                 <span class="featured-tag">NOVO</span>
               </div>
-              <!-- Produto Ultra -->
               <div class="hidden-product" data-category="ranks" style="background-color: #FFB6C1;">
                 <div class="product-image">
                   <img src="media/ultra_placeholder.webp" alt="Ultra">
@@ -588,12 +552,25 @@
                   <p class="product-price">R$ 89,99</p>
                 </div>
                 <div class="product-actions">
-                  <button class="buy-btn" data-product="Ultra" data-price="89.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="buy-btn"><i class="fa fa-shopping-cart"></i> Comprar</button>
                   <button class="info-btn" data-product="Ultra" data-price="89.99" data-description="Rank Ultra com benefícios premium por 30 dias."><i class="fa fa-question-circle"></i> Info</button>
                 </div>
                 <span class="featured-tag">NOVO</span>
               </div>
-              <!-- Produtos de Liberdade -->
+              <div class="hidden-product" data-category="ranks" style="background-color: #DDA0DD;">
+                <div class="product-image">
+                  <img src="media/ultra_mais.webp" alt="Ultra+">
+                </div>
+                <div class="product-details">
+                  <h4>Ultra+</h4>
+                  <p class="product-price">R$ 129,99</p>
+                </div>
+                <div class="product-actions">
+                  <button class="buy-btn"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="info-btn" data-product="Ultra+" data-price="129.99" data-description="Rank Ultra+ com benefícios premium avançados por 30 dias."><i class="fa fa-question-circle"></i> Info</button>
+                </div>
+                <span class="featured-tag">VER MAIS</span>
+              </div>
               <div class="hidden-product" data-category="liberdade" style="display: none; background-color: #808080;">
                 <div class="product-image">
                   <img src="media/ban_placeholder.webp" alt="Ban">
@@ -603,7 +580,7 @@
                   <p class="product-price">R$ 29,99</p>
                 </div>
                 <div class="product-actions">
-                  <button class="buy-btn" data-product="Ban" data-price="29.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="buy-btn"><i class="fa fa-shopping-cart"></i> Comprar</button>
                   <button class="info-btn" data-product="Ban" data-price="29.99" data-description="Remove banimento da sua conta."><i class="fa fa-question-circle"></i> Info</button>
                 </div>
                 <span class="featured-tag">EM OFERTA</span>
@@ -617,13 +594,59 @@
                   <p class="product-price">R$ 19,99</p>
                 </div>
                 <div class="product-actions">
-                  <button class="buy-btn" data-product="Unmute" data-price="19.99"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="buy-btn"><i class="fa fa-shopping-cart"></i> Comprar</button>
                   <button class="info-btn" data-product="Unmute" data-price="19.99" data-description="Remove mudo da sua conta."><i class="fa fa-question-circle"></i> Info</button>
+                </div>
+                <span class="featured-tag">EM OFERTA</span>
+              </div>
+              <div class="hidden-product" data-category="money" style="display: none; background-color: #FFD700;">
+                <div class="product-image">
+                  <img src="media/money.webp" alt="Lordcoin">
+                </div>
+                <div class="product-details">
+                  <h4>Lordcoin</h4>
+                  <p class="product-price">R$ 100,00</p>
+                </div>
+                <div class="product-actions">
+                  <button class="buy-btn"><i class="fa fa-shopping-cart"></i> Comprar</button>
+                  <button class="info-btn lordcoin-info-btn"><i class="fa fa-question-circle"></i> Info</button>
                 </div>
                 <span class="featured-tag">EM OFERTA</span>
               </div>
             </div>
           </div>
+        </div>
+        <div class="rank-benefits-container ranks-active">
+          <table class="rank-benefits">
+            <thead>
+              <tr>
+                <th></th>
+                <th>BETA ETERNO</th>
+                <th>VIP</th>
+                <th>ULTRA</th>
+                <th>ULTRA+</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Destaque</td><td></td><td></td><td></td><td></td></tr>
+              <tr><td>Nick customizado</td><td>?</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Criar Clã</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Abrir party</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Mensagens de entrada do Lobby</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Anúncio ao entrar no Lobby</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Voar no Lobby</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Cosméticos exclusivos</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Medalhas inclusas</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Skin customizada (/skin)</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Asas de dragão</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Asas de coração</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Seletor de mapas</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr class="discord-row"><td>Discord</td><td></td><td></td><td></td><td></td></tr>
+              <tr><td>Sala de voz exclusiva</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Alterar seu apelido</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Tag exclusiva</td><td>?</td><td>✅</td><td>✅</td><td>✅</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -631,33 +654,6 @@
       <a class="copyright">Todos os direitos reservados - LORDHUBMCDjado © 2025</a>
     </footer>
 
-    <!-- Aba do Carrinho -->
-    <div id="cart-overlay" class="cart-overlay">
-      <div class="cart-content">
-        <h2><i class="fa fa-star"></i> Carrinho</h2>
-        <p class="empty-cart" id="cart-empty">Nenhum produto encontrado no seu carrinho.</p>
-        <div id="cart-items"></div>
-        <button class="explore-btn" id="explore-store"><i class="fa fa-shopping-basket"></i> Explorar loja</button>
-        <div class="coupon-input">
-          <input type="text" id="coupon-code" placeholder="Tem um cupom de desconto?">
-          <button id="apply-coupon">Aplicar</button>
-          <p class="coupon-message coupon-success" id="coupon-success">Cupom usado com sucesso!</p>
-          <p class="coupon-message coupon-error" id="coupon-error">Cupom inválido ou já resgatado!</p>
-        </div>
-        <div class="user-inputs">
-          <label for="user-gmail">Gmail:</label>
-          <input type="email" id="user-gmail" placeholder="Seu e-mail do Gmail" required>
-          <label for="minecraft-nick">Nick do Minecraft:</label>
-          <input type="text" id="minecraft-nick" placeholder="Seu nick do Minecraft" required>
-          <label for="discord-nick">Nick do Discord:</label>
-          <input type="text" id="discord-nick" placeholder="Seu nick do Discord" required>
-        </div>
-        <div class="total" id="cart-total">Valor total: R$ 0,00</div>
-        <button class="checkout-btn" id="checkout-btn"><i class="fa fa-shopping-cart"></i> Finalizar compra</button>
-      </div>
-    </div>
-
-    <!-- Aba de Informações do Produto -->
     <div id="info-overlay" class="info-overlay">
       <div class="info-content">
         <h2><i class="fa fa-question-circle"></i> Informações do Produto</h2>
@@ -666,7 +662,6 @@
       </div>
     </div>
 
-    <!-- Botão de Chat e elementos relacionados -->
     <button class="chat-button" onclick="toggleChat()">🗨️</button>
     <div class="chat-menu" id="chat-menu">
       <img src="media/favicon.png" alt="Chat Icon">
@@ -695,15 +690,11 @@
       let currentChatId = localStorage.getItem('currentChatId') ? parseInt(localStorage.getItem('currentChatId')) : null;
 
       $(document).ready(function() {
-        // Configuração do Mercado Pago
-        const mp = new MercadoPago('APP_USR-e9b0cad1-d0da-4052-b30c-697a94eaae57', {
-          locale: 'pt-BR'
-        });
-
-        // Exibir Beta Eterno, VIP e Ultra por padrão ao carregar a página
+        // Exibir Beta Eterno, VIP, Ultra e Ultra+ por padrão ao carregar a página
         $('#product-display').css('display', 'flex');
         $('.hidden-product[data-category="ranks"]').css('display', 'flex');
         $('.hidden-product[data-category="liberdade"]').hide();
+        $('.hidden-product[data-category="money"]').hide();
 
         // Lógica para alternar categorias ao clicar
         $('.category-item').on('click', function() {
@@ -712,33 +703,24 @@
 
           var category = $(this).data('category');
           $('.featured-product, .hidden-product').hide();
+          $('.rank-benefits-container').removeClass('ranks-active');
           if (category === 'ranks') {
             $('#product-display').css('display', 'flex');
             $('.hidden-product[data-category="ranks"]').css('display', 'flex');
+            $('.rank-benefits-container').addClass('ranks-active');
           } else if (category === 'liberdade') {
             $('.hidden-product[data-category="liberdade"]').css('display', 'flex');
+          } else if (category === 'money') {
+            $('.hidden-product[data-category="money"]').css('display', 'flex');
           }
         });
 
-        // Carrinho
-        let cart = [];
-        let discountApplied = false;
-
+        // Lógica para o botão Comprar
         $('.buy-btn').on('click', function() {
-          const product = $(this).data('product');
-          const price = parseFloat($(this).data('price'));
-          const item = cart.find(item => item.product === product);
-          if (item) {
-            item.quantity += 1;
-          } else {
-            cart.push({ product, price, quantity: 1 });
-          }
-          updateCart();
-
-          // Notificação de item adicionado abaixo do nome do produto
           const productDetails = $(this).closest('.featured-product, .hidden-product').find('.product-details h4');
+          const product = productDetails.text();
           const notification = $('<div>', { class: 'buy-notification' })
-            .text(`Comprei o ${product}`);
+            .text(`Compre ${product} no Discord!`);
           productDetails.after(notification);
           notification.css({
             top: productDetails.position().top + productDetails.outerHeight(),
@@ -749,10 +731,11 @@
               $(this).remove();
             });
           }, 800);
+          window.open('https://discord.gg/XQHjmphYqg', '_blank');
         });
 
-        // Lógica para o botão Info
-        $('.info-btn').on('click', function() {
+        // Lógica para os botões Info (exceto Lordcoin)
+        $(document).on('click', '.info-btn:not(.lordcoin-info-btn)', function() {
           const product = $(this).data('product');
           const price = $(this).data('price');
           const description = $(this).data('description');
@@ -764,171 +747,26 @@
           $('#info-overlay').css('display', 'block');
         });
 
-        $('#cart-link').on('click', function(e) {
-          e.preventDefault();
-          $('#cart-overlay').css('display', 'block');
-          updateCart();
-        });
-
-        $('#explore-store').on('click', function() {
-          $('#cart-overlay').css('display', 'none');
+        // Lógica específica para o botão Info do Lordcoin
+        $(document).on('click', '.lordcoin-info-btn', function() {
+          $('#info-details').html(`
+            <p><strong>Produto:</strong> Lordcoin</p>
+            <p><strong>Preço:</strong> R$ 100.00</p>
+            <p><strong>Descrição:</strong> Receba 5 milhões de LordCoin na sua conta.</p>
+          `);
+          $('#info-overlay').css('display', 'block');
         });
 
         $('#close-info').on('click', function() {
           $('#info-overlay').css('display', 'none');
         });
 
-        $('#checkout-btn').on('click', function() {
-          if (cart.length === 0) {
-            alert('Seu carrinho está vazio!');
-            return;
-          }
-
-          // Validar campos de entrada do usuário
-          const gmail = $('#user-gmail').val().trim();
-          const minecraftNick = $('#minecraft-nick').val().trim();
-          const discordNick = $('#discord-nick').val().trim();
-          if (!gmail || !minecraftNick || !discordNick) {
-            alert('Por favor, preencha todos os campos obrigatórios.');
-            return;
-          }
-
-          // Mostrar loading
-          $(this).html('<i class="fa fa-spinner fa-spin"></i> Processando...').prop('disabled', true);
-
-          // Preparar itens para o Mercado Pago
-          const items = cart.map(item => ({
-            title: item.product,
-            unit_price: item.price,
-            quantity: item.quantity,
-            currency_id: 'BRL'
-          }));
-
-          // Aplicar desconto se houver cupom válido
-          let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-          if (discountApplied) {
-            total = total * 0.9; // Aplica 10% de desconto
-          }
-
-          // Salvar pedido no localStorage
-          const order = {
-            id: Date.now(),
-            items: cart,
-            total: total.toFixed(2),
-            gmail,
-            minecraftNick,
-            discordNick,
-            date: new Date().toLocaleString('pt-BR')
-          };
-          let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-          orders.push(order);
-          localStorage.setItem('orders', JSON.stringify(orders));
-
-          // Criar preferência de pagamento
-          fetch("https://api.mercadopago.com/checkout/preferences", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer APP_USR-3894547487533659-061112-05d3306703a190e0bed9e4921aebefa2-1868956497"
-            },
-            body: JSON.stringify({
-              items: items,
-              back_urls: {
-                success: window.location.href,
-                failure: window.location.href,
-                pending: window.location.href
-              },
-              auto_return: "approved",
-              statement_descriptor: "LORDHUB STORE"
-            })
-          })
-          .then(response => response.json())
-          .then(preference => {
-            // Redirecionar para o checkout do Mercado Pago
-            window.location.href = preference.init_point;
-          })
-          .catch(error => {
-            console.error("Erro ao criar checkout:", error);
-            alert("Erro ao processar o pagamento. Tente novamente.");
-            $('#checkout-btn').html('<i class="fa fa-shopping-cart"></i> Finalizar compra').prop('disabled', false);
-          });
-        });
-
-        // Fechar carrinho ou info ao clicar fora
+        // Fechar info ao clicar fora
         $(document).on('click', function(e) {
-          if (!$(e.target).closest('.cart-content').length && !$(e.target).is('#cart-link') && !$(e.target).closest('.info-content').length && !$(e.target).is('.info-btn')) {
-            $('#cart-overlay').css('display', 'none');
+          if (!$(e.target).closest('.info-content').length && !$(e.target).is('.info-btn') && !$(e.target).is('.lordcoin-info-btn')) {
             $('#info-overlay').css('display', 'none');
           }
         });
-
-        // Aplicar cupom
-        $('#apply-coupon').on('click', function() {
-          const couponCode = $('#coupon-code').val().trim();
-          const couponSuccess = $('#coupon-success');
-          const couponError = $('#coupon-error');
-
-          if (couponCode === 'LORDHUB10' && !discountApplied) {
-            discountApplied = true;
-            updateCart();
-            couponSuccess.show();
-            couponError.hide();
-            setTimeout(function() {
-              couponSuccess.hide();
-            }, 2000);
-          } else if (discountApplied) {
-            couponError.text('Cupom já resgatado!').show();
-            couponSuccess.hide();
-            setTimeout(function() {
-              couponError.hide();
-            }, 2000);
-          } else {
-            couponError.text('Cupom inválido ou já resgatado!').show();
-            couponSuccess.hide();
-            setTimeout(function() {
-              couponError.hide();
-            }, 2000);
-          }
-        });
-
-        function updateCart() {
-          const cartItems = $('#cart-items');
-          cartItems.empty();
-          let total = 0;
-
-          if (cart.length === 0) {
-            $('#cart-empty').show();
-            $('#cart-total').text('Valor total: R$ 0,00');
-            $('#checkout-btn').prop('disabled', true);
-          } else {
-            $('#cart-empty').hide();
-            cart.forEach((item, index) => {
-              const itemTotal = item.price * item.quantity;
-              total += itemTotal;
-              cartItems.append(`
-                <p>${item.product} - R$ ${item.price.toFixed(2)} x ${item.quantity} = R$ ${(itemTotal).toFixed(2)}
-                  <span class="remove-item" data-index="${index}"><i class="fa fa-times"></i></span></p>
-              `);
-            });
-
-            // Aplicar desconto de 10% se o cupom for válido
-            if (discountApplied) {
-              const discount = total * 0.10;
-              total -= discount;
-              $('#cart-total').text(`Valor total: R$ ${total.toFixed(2)} (Desconto de 10%: -R$ ${discount.toFixed(2)})`);
-            } else {
-              $('#cart-total').text(`Valor total: R$ ${total.toFixed(2)}`);
-            }
-            $('#checkout-btn').prop('disabled', false);
-
-            // Remover item do carrinho
-            $('.remove-item').off('click').on('click', function() {
-              const index = $(this).data('index');
-              cart.splice(index, 1);
-              updateCart();
-            });
-          }
-        }
 
         // Inicializar chat
         loadChat();
