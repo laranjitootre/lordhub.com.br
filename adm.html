@@ -55,7 +55,6 @@
         margin: 20px auto;
         display: none;
       }
-      /* Estilização das abas */
       .admin-tabs {
         display: flex;
         justify-content: center;
@@ -78,14 +77,13 @@
         background: #8A2BE2;
         color: #fff;
       }
-      /* Seções */
-      .order-container, .post-container, .chat-container {
+      .post-container, .chat-container {
         display: none;
       }
-      .order-container.active, .post-container.active, .chat-container.active {
+      .post-container.active, .chat-container.active {
         display: block;
       }
-      .order, .post, .chat {
+      .post, .chat {
         background: rgba(45, 51, 57, 0.8);
         padding: 15px;
         margin-bottom: 15px;
@@ -93,23 +91,23 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         position: relative;
       }
-      .order h3, .post h3, .chat h3 {
+      .post h3, .chat h3 {
         color: #8A2BE2;
         margin: 0 0 10px;
         text-transform: uppercase;
       }
-      .order p, .post p, .chat p {
+      .post p, .chat p {
         margin: 5px 0;
         color: #B0B0B0;
       }
-      .order-items, .post-content, .chat-messages {
+      .post-content, .chat-messages {
         margin-top: 10px;
       }
-      .no-orders, .no-posts, .no-chats {
+      .no-posts, .no-chats {
         text-align: center;
         color: #B0B0B0;
       }
-      .clear-orders, .manage-posts, .delete-post, .edit-post, .end-chat, .reply-chat {
+      .manage-posts, .delete-post, .edit-post, .end-chat, .reply-chat {
         background: linear-gradient(45deg, #FF0000, #CC0000);
         color: white;
         border: none;
@@ -131,7 +129,7 @@
       .reply-chat {
         background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
       }
-      .manage-posts:hover, .clear-orders:hover, .delete-post:hover, .edit-post:hover, .end-chat:hover, .reply-chat:hover {
+      .manage-posts:hover, .delete-post:hover, .edit-post:hover, .end-chat:hover, .reply-chat:hover {
         transform: scale(1.05);
       }
       .post-form {
@@ -253,16 +251,10 @@
     </div>
     <div class="admin-container">
       <div class="admin-tabs">
-        <div class="tab-item active-tab" data-tab="orders">Pedidos</div>
-        <div class="tab-item" data-tab="posts">Postagens</div>
+        <div class="tab-item active-tab" data-tab="posts">Postagens</div>
         <div class="tab-item" data-tab="chats">Chats</div>
       </div>
-      <div class="order-container active">
-        <h2><i class="fa fa-star"></i> Pedidos Recebidos</h2>
-        <div id="orders-list"></div>
-        <button class="clear-orders" id="clear-orders"><i class="fa fa-trash"></i> Limpar Pedidos</button>
-      </div>
-      <div class="post-container">
+      <div class="post-container active">
         <h2><i class="fa fa-pen"></i> Gerenciar Posts</h2>
         <button class="manage-posts" id="show-post-form"><i class="fa fa-plus"></i> Novo Post</button>
         <div id="post-form" class="post-form">
@@ -295,10 +287,8 @@
           $(this).addClass('active-tab');
 
           var tab = $(this).data('tab');
-          $('.order-container, .post-container, .chat-container').removeClass('active').hide();
-          if (tab === 'orders') {
-            $('.order-container').addClass('active').show();
-          } else if (tab === 'posts') {
+          $('.post-container, .chat-container').removeClass('active').hide();
+          if (tab === 'posts') {
             $('.post-container').addClass('active').show();
           } else if (tab === 'chats') {
             $('.chat-container').addClass('active').show();
@@ -311,7 +301,6 @@
         if (password === 'admin123') {
           $('.login-container').hide();
           $('.admin-container').show();
-          displayOrders();
           displayPosts();
           displayChats();
         } else {
@@ -362,41 +351,6 @@
 
         return html;
       }
-
-      function displayOrders() {
-        const ordersList = $('#orders-list');
-        ordersList.empty();
-        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-        if (orders.length === 0) {
-          ordersList.append('<p class="no-orders">Nenhum pedido recebido.</p>');
-        } else {
-          orders.forEach(order => {
-            let itemsHtml = '<div class="order-items">';
-            order.items.forEach(item => {
-              itemsHtml += `<p>${item.product} - R$ ${item.price.toFixed(2)} x ${item.quantity} = R$ ${(item.price * item.quantity).toFixed(2)}</p>`;
-            });
-            itemsHtml += '</div>';
-            ordersList.append(`
-              <div class="order">
-                <h3>Pedido #${order.id}</h3>
-                <p><strong>Data:</strong> ${order.date}</p>
-                <p><strong>Gmail:</strong> ${order.gmail}</p>
-                <p><strong>Nick do Minecraft:</strong> ${order.minecraftNick}</p>
-                <p><strong>Nick do Discord:</strong> ${order.discordNick}</p>
-                ${itemsHtml}
-                <p><strong>Total:</strong> R$ ${order.total}</p>
-              </div>
-            `);
-          });
-        }
-      }
-
-      $('#clear-orders').on('click', function() {
-        if (confirm('Deseja limpar todos os pedidos?')) {
-          localStorage.removeItem('orders');
-          displayOrders();
-        }
-      });
 
       $('#show-post-form').on('click', function() {
         $('#post-title').val('');
@@ -556,7 +510,7 @@
             chat.messages.push(`[ADM] ${message}`);
             localStorage.setItem('chats', JSON.stringify(chats));
             $('#admin-message').val('');
-            $('#chat-messages').empty(); // Limpa antes de recarregar
+            $('#chat-messages').empty();
             chat.messages.forEach(msg => {
               $('#chat-messages').append(`<p>${msg}</p>`);
             });
@@ -584,7 +538,6 @@
         }
       });
 
-      // Adicionar evento de storage para sincronizar mensagens em tempo real
       $(window).on('storage', function(e) {
         if (e.originalEvent.key === 'chats' && currentChatId) {
           const chats = JSON.parse(localStorage.getItem('chats') || '[]');
