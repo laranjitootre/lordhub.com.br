@@ -1059,6 +1059,10 @@ body {
     background-color: #FF8C00;
 }
 
+.category-item.active-category[data-category="money"] {
+    background-color: #e5ff00;
+}
+
 /* Produtos */
 .store-products {
     width: 80%;
