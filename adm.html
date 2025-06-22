@@ -426,6 +426,7 @@
         <li class="active"><a href="#" onclick="showSection('inicio')"><i class="fa fa-home"></i> <span>Início</span></a></li>
         <li id="vendas-menu-item"><a href="#" onclick="toggleSalesMenu()"><i class="fa fa-money"></i> <span>Vendas</span></a></li>
         <li id="painel-menu-item"><a href="#" onclick="window.open('http://ex.com.br')"><i class="fa fa-dashboard"></i> <span>Painel</span></a></li>
+        <li id="centralcart-menu-item"><a href="#" onclick="window.open('https://app.centralcart.com.br/settings')"><i class="fa fa-shopping-cart"></i> <span>CentralCart</span></a></li>
         <li id="bot-menu-item" style="display: none;"><a href="#" onclick="showSection('bot')"><i class="fa fa-android"></i> <span>Bot</span></a></li>
         <li class="logout"><a href="#" onclick="logout()"><i class="fa fa-sign-out"></i> <span>Sair</span></a></li>
         <li id="user-role" class="user-role" style="display: none;"><i class="fa fa-user"></i> <span id="user-role-text"></span></li>
@@ -441,16 +442,12 @@
               <p id="total-expenses">R$ 0,00</p>
             </div>
             <div class="card">
-              <h3>Vendas Totais</h3>
-              <p id="total-sales">R$ 0,00</p>
-            </div>
-            <div class="card">
               <h3>Jogadores Online</h3>
               <p id="online-players">0</p>
             </div>
           </div>
           <div class="chart-container">
-            <canvas id="salesExpensesChart"></canvas>
+            <canvas id="playersChart"></canvas>
           </div>
           <div class="notifications">
             <h3>Notificações</h3>
@@ -545,7 +542,7 @@
         }
       };
 
-      let salesExpensesChart = null;
+      let playersChart = null;
       let userRole = null;
       let webhookUrl = null;
 
@@ -577,15 +574,18 @@
       function setupUserInterface(role) {
         $('#vendas-menu-item').hide();
         $('#painel-menu-item').hide();
+        $('#centralcart-menu-item').hide();
         $('#bot-menu-item').hide();
         $('#user-role').show();
         if (role === 'CEO') {
           $('#vendas-menu-item').show();
           $('#painel-menu-item').show();
+          $('#centralcart-menu-item').show();
           $('#bot-menu-item').show();
           $('#user-role-text').text('LORDCEO');
         } else if (role === 'ADM') {
           $('#vendas-menu-item').show();
+          $('#centralcart-menu-item').show();
           $('#bot-menu-item').show();
           $('#user-role-text').text('LORDADM');
         } else if (role === 'MODERADOR') {
@@ -608,8 +608,8 @@
         $('.admin-content').hide();
         $('#sales-menu').show();
         $('#year-data').hide();
-        $('#bot').hide(); // Explicitly hide bot section
-        $('#embed-form').hide(); // Explicitly hide embed form
+        $('#bot').hide();
+        $('#embed-form').hide();
       }
 
       function backToDashboard() {
@@ -656,31 +656,36 @@
       }
 
       function updateDashboard() {
-        let totalSales = 0;
         let totalExpenses = 0;
         for (let year in salesData) {
           for (let month in salesData[year]) {
-            totalSales += salesData[year][month].sales;
             totalExpenses += salesData[year][month].expenses;
           }
         }
-        $('#total-sales').text(`R$ ${totalSales.toFixed(2).replace('.', ',')}`);
         $('#total-expenses').text(`R$ ${totalExpenses.toFixed(2).replace('.', ',')}`);
 
-        try {
-          const canvas = document.getElementById('salesExpensesChart');
-          if (canvas) {
+        $.getJSON('https://api.mcsrvstat.us/2/lordhub.com.br', function(data) {
+          let onlinePlayers = (data && data.players && typeof data.players.online !== 'undefined') ? data.players.online : 0;
+          $('#online-players').text(onlinePlayers);
+
+          const canvas = document.getElementById('playersChart');
+          if (!canvas) {
+            console.error('Elemento canvas #playersChart não encontrado.');
+            return;
+          }
+
+          try {
             const ctx = canvas.getContext('2d');
-            if (salesExpensesChart) {
-              salesExpensesChart.destroy();
+            if (playersChart) {
+              playersChart.destroy();
             }
-            salesExpensesChart = new Chart(ctx, {
+            playersChart = new Chart(ctx, {
               type: 'bar',
               data: {
-                labels: ['Vendas Totais', 'Despesas Totais'],
+                labels: ['Jogadores Online', 'Despesas Totais'],
                 datasets: [{
-                  label: 'Valores (R$)',
-                  data: [totalSales, totalExpenses],
+                  label: 'Valores',
+                  data: [onlinePlayers, totalExpenses],
                   backgroundColor: ['#8A2BE2', '#FF4D4D'],
                   borderColor: ['#6A1EC2', '#CC0000'],
                   borderWidth: 1
@@ -693,7 +698,7 @@
                     beginAtZero: true,
                     title: {
                       display: true,
-                      text: 'Valor (R$)',
+                      text: 'Quantidade / R$',
                       color: '#D0C0FF'
                     },
                     ticks: {
@@ -721,18 +726,8 @@
                 }
               }
             });
-          } else {
-            console.error('Elemento canvas #salesExpensesChart não encontrado.');
-          }
-        } catch (error) {
-          console.error('Erro ao criar o gráfico:', error);
-        }
-
-        $.getJSON('https://api.mcsrvstat.us/2/lorub.com.br', function(data) {
-          if (data && data.players && typeof data.players.online !== 'undefined') {
-            $('#online-players').text(data.players.online);
-          } else {
-            $('#online-players').text('0');
+          } catch (error) {
+            console.error('Erro ao criar o gráfico:', error);
           }
         }).fail(function(jqXHR, textStatus, errorThrown) {
           console.error('Erro ao buscar jogadores online:', textStatus, errorThrown);
@@ -932,8 +927,11 @@
       }
 
       $(document).ready(function() {
-        updateDashboard();
         $('#embed-title, #embed-description, #embed-color, #embed-image, #embed-thumbnail, #embed-footer, #embed-author, #embed-author-url').on('input', updatePreview);
+        // Call updateDashboard only after DOM is ready
+        if ($('#inicio').is(':visible')) {
+          updateDashboard();
+        }
       });
     </script>
   </body>
