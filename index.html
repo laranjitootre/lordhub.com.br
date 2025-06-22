@@ -644,206 +644,213 @@
           <span class="discord-subtext">lordhub.com.br</span>
         </div>
       </div>
-      <div id="info-overlay" class="info-overlay">
-        <div class="info-content">
-          <h2><i class="fa fa-question-circle"></i> Informações do Modo</h2>
-          <div id="info-details"></div>
-          <button class="close-btn" id="close-info"><i class="fa fa-times"></i> Fechar</button>
-        </div>
+    </div>
+    <div id="info-overlay" class="info-overlay">
+      <div class="info-content">
+        <h2><i class="fa fa-question-circle"></i> Informações do Modo</h2>
+        <div id="info-details"></div>
+        <button class="close-btn" id="close-info"><i class="fa fa-times"></i> Fechar</button>
       </div>
-      <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          // Verificação para ipLink
-          const ipLink = document.querySelector(".discord-container-left .discord-link");
-          if (ipLink) {
-            ipLink.removeAttribute("href");
-            ipLink.removeAttribute("target");
-            ipLink.addEventListener("click", (e) => {
-              e.preventDefault();
-              navigator.clipboard.writeText(ipLink.nextElementSibling.textContent).catch(err => {
-                console.error("Erro ao copiar: ", err);
-                alert("Erro ao copiar o IP. Por favor, copie manualmente: lordhub.com.br");
-              });
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Verificação para ipLink
+        const ipLink = document.querySelector(".discord-container-left .discord-link");
+        if (ipLink) {
+          ipLink.removeAttribute("href");
+          ipLink.removeAttribute("target");
+          ipLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            navigator.clipboard.writeText(ipLink.nextElementSibling.textContent).catch(err => {
+              console.error("Erro ao copiar: ", err);
+              alert("Erro ao copiar o IP. Por favor, copie manualmente: lordhub.com.br");
             });
-          }
-
-          // Verificação para discordSubtext
-          const discordSubtext = document.querySelector('.discord-container .discord-subtext');
-          if (discordSubtext) {
-            const originalText = document.createElement('span');
-            originalText.className = 'original-text';
-            originalText.textContent = discordSubtext.textContent;
-            const hoverText = document.createElement('span');
-            hoverText.className = 'hover-text';
-            discordSubtext.innerHTML = '';
-            discordSubtext.appendChild(originalText);
-            discordSubtext.appendChild(hoverText);
-            discordSubtext.addEventListener('mouseover', async () => {
-              hoverText.textContent = 'Carregando...';
-              try {
-                const response = await fetch('https://discord.com/api/v9/invites/XQHjmphYqg?with_counts=true', {
-                  method: 'GET',
-                  headers: { 'Accept': 'application/json' }
-                });
-                const data = await response.json();
-                if (data.approximate_member_count) {
-                  hoverText.textContent = `Jogadores: ${data.approximate_member_count}`;
-                } else {
-                  hoverText.textContent = 'Jogadores: Não disponível';
-                }
-              } catch (error) {
-                hoverText.textContent = 'Jogadores: Erro ao carregar';
-                console.error('Erro ao buscar membros:', error);
-              }
-            });
-            discordSubtext.addEventListener('mouseout', () => {
-              hoverText.textContent = '';
-            });
-          }
-
-          // Verificação para mcSubtext
-          const mcSubtext = document.querySelector('.discord-container-left .discord-subtext');
-          if (mcSubtext) {
-            const originalText = document.createElement('span');
-            originalText.className = 'original-text';
-            originalText.textContent = mcSubtext.textContent;
-            const hoverText = document.createElement('span');
-            hoverText.className = 'hover-text';
-            mcSubtext.innerHTML = '';
-            mcSubtext.appendChild(originalText);
-            mcSubtext.appendChild(hoverText);
-            mcSubtext.addEventListener('mouseover', async () => {
-              hoverText.textContent = 'Carregando...';
-              try {
-                const response = await fetch(`https://api.mcsrvstat.us/2/lordhub.com.br`);
-                const data = await response.json();
-                if (data.players && data.players.online) {
-                  hoverText.textContent = `Online: ${data.players.online}`;
-                } else {
-                  hoverText.textContent = 'Online: 0';
-                }
-              } catch (error) {
-                hoverText.textContent = 'Online: Erro ao carregar';
-                console.error('Erro ao buscar jogadores online:', error);
-              }
-            });
-            mcSubtext.addEventListener('mouseout', () => {
-              hoverText.textContent = '';
-            });
-          }
-
-          // Verificação para copyButton
-          const copyButton = document.querySelector('.copy-button');
-          if (copyButton) {
-            copyButton.addEventListener('click', () => {
-              navigator.clipboard.writeText('lordhub.com.br').then(() => {
-                copyButton.textContent = 'COPIADO';
-                setTimeout(() => {
-                  copyButton.textContent = 'COPIAR IP';
-                }, 2000);
-              }).catch(err => {
-                console.error('Erro ao copiar: ', err);
-                alert("Erro ao copiar o IP. Por favor, copie manualmente: lordhub.com.br");
-              });
-            });
-          }
-
-          // Lógica para o menu de informações dos modos
-          const infoOverlay = document.getElementById('info-overlay');
-          const infoDetails = document.getElementById('info-details');
-          const closeInfo = document.getElementById('close-info');
-
-          const stripeItems = document.querySelectorAll('.stripe-item');
-          if (stripeItems.length > 0) {
-            stripeItems.forEach(item => {
-              item.addEventListener('click', () => {
-                const mode = item.getAttribute('data-mode');
-                let description = '';
-                switch (mode) {
-                  case 'bedwars':
-                    description = `
-                      < the rest of the HTML remains unchanged >
-                    `;
-                    break;
-                  case 'treino':
-                    description = `
-                      <p><strong>Treino</strong> é um modo dedicado ao aprimoramento de habilidades, com áreas para praticar PvP, parkour e outras mecânicas do jogo.</p>
-                    `;
-                    break;
-                  case 'survival':
-                    description = `
-                      <p><strong>Survival</strong> é um modo de sobrevivência onde os jogadores exploram, constroem e enfrentam desafios em um mundo aberto.</p>
-                    `;
-                    break;
-                  case 'rankup':
-                    description = `
-                      <p><strong>Rankup</strong> é um modo onde os jogadores progridem através de ranks ao completar missões e acumular pontos.</p>
-                    `;
-                    break;
-                }
-                if (infoDetails && infoOverlay) {
-                  infoDetails.innerHTML = description;
-                  infoOverlay.style.display = 'block';
-                }
-              });
-            });
-          }
-
-          if (closeInfo && infoOverlay) {
-            closeInfo.addEventListener('click', () => {
-              infoOverlay.style.display = 'none';
-            });
-          }
-
-          // Fechar overlay ao clicar fora
-          document.addEventListener('click', (e) => {
-            if (infoOverlay && !infoOverlay.contains(e.target) && !e.target.closest('.stripe-item')) {
-              infoOverlay.style.display = 'none';
-            }
           });
+        }
 
-          // Redirecionar para loja.html ao clicar no texto "LOJA"
-          const lojaItem = document.querySelector('.loja-item');
-          if (lojaItem) {
-            lojaItem.addEventListener('click', () => {
-              window.location.href = 'loja.html';
-            });
-          }
-
-          // Atualizar status do servidor
-          const serverStatus = document.getElementById('server-status');
-          const serverVersion = document.getElementById('server-version');
-          const serverTime = document.getElementById('server-time');
-          async function updateServerStatus() {
+        // Verificação para discordSubtext
+        const discordSubtext = document.querySelector('.discord-container .discord-subtext');
+        if (discordSubtext) {
+          const originalText = document.createElement('span');
+          originalText.className = 'original-text';
+          originalText.textContent = discordSubtext.textContent;
+          const hoverText = document.createElement('span');
+          hoverText.className = 'hover-text';
+          discordSubtext.innerHTML = '';
+          discordSubtext.appendChild(originalText);
+          discordSubtext.appendChild(hoverText);
+          discordSubtext.addEventListener('mouseover', async () => {
+            hoverText.textContent = 'Carregando...';
             try {
-              const response = await fetch('https://api.mcsrvstat.us/2/lordhub.com.br');
+              const response = await fetch('https://discord.com/api/v9/invites/XQHjmphYqg?with_counts=true', {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+              });
               const data = await response.json();
-              if (serverStatus && serverVersion && serverTime) {
-                if (data.online) {
-                  serverStatus.textContent = `Servidor Online - ${data.players.online}/${data.players.max} jogadores`;
-                  serverStatus.className = 'server-status online';
-                  serverVersion.textContent = `Versão: ${data.version}`;
-                } else {
-                  serverStatus.textContent = 'Servidor Offline';
-                  serverStatus.className = 'server-status offline';
-                  serverVersion.textContent = 'Versão: Não disponível';
-                }
-                const now = new Date();
-                serverTime.textContent = `Horário: ${now.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' })}`;
+              if (data.approximate_member_count) {
+                hoverText.textContent = `Jogadores: ${data.approximate_member_count}`;
+              } else {
+                hoverText.textContent = 'Jogadores: Não disponível';
               }
             } catch (error) {
-              if (serverStatus && serverVersion && serverTime) {
-                serverStatus.textContent = 'Erro ao carregar status';
-                serverStatus.className = 'server-status';
-                serverVersion.textContent = 'Versão: Erro ao carregar';
-                serverTime.textContent = 'Horário: Erro ao carregar';
-              }
-              console.error('Erro ao buscar status do servidor:', error);
+              hoverText.textContent = 'Jogadores: Erro ao carregar';
+              console.error('Erro ao buscar membros:', error);
             }
+          });
+          discordSubtext.addEventListener('mouseout', () => {
+            hoverText.textContent = '';
+          });
+        }
+
+        // Verificação para mcSubtext
+        const mcSubtext = document.querySelector('.discord-container-left .discord-subtext');
+        if (mcSubtext) {
+          const originalText = document.createElement('span');
+          originalText.className = 'original-text';
+          originalText.textContent = mcSubtext.textContent;
+          const hoverText = document.createElement('span');
+          hoverText.className = 'hover-text';
+          mcSubtext.innerHTML = '';
+          mcSubtext.appendChild(originalText);
+          mcSubtext.appendChild(hoverText);
+          mcSubtext.addEventListener('mouseover', async () => {
+            hoverText.textContent = 'Carregando...';
+            try {
+              const response = await fetch(`https://api.mcsrvstat.us/2/lordhub.com.br`);
+              const data = await response.json();
+              if (data.players && data.players.online) {
+                hoverText.textContent = `Online: ${data.players.online}`;
+              } else {
+                hoverText.textContent = 'Online: 0';
+              }
+            } catch (error) {
+              hoverText.textContent = 'Online: Erro ao carregar';
+              console.error('Erro ao buscar jogadores online:', error);
+            }
+          });
+          mcSubtext.addEventListener('mouseout', () => {
+            hoverText.textContent = '';
+          });
+        }
+
+        // Verificação para copyButton
+        const copyButton = document.querySelector('.copy-button');
+        if (copyButton) {
+          copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText('lordhub.com.br').then(() => {
+              copyButton.textContent = 'COPIADO';
+              setTimeout(() => {
+                copyButton.textContent = 'COPIAR IP';
+              }, 2000);
+            }).catch(err => {
+              console.error('Erro ao copiar: ', err);
+              alert("Erro ao copiar o IP. Por favor, copie manualmente: lordhub.com.br");
+            });
+          });
+        }
+
+        // Lógica para o menu de informações dos modos
+        const infoOverlay = document.getElementById('info-overlay');
+        const infoDetails = document.getElementById('info-details');
+        const closeInfo = document.getElementById('close-info');
+
+        const stripeItems = document.querySelectorAll('.stripe-item');
+        if (stripeItems.length > 0) {
+          stripeItems.forEach(item => {
+            item.addEventListener('click', () => {
+              const mode = item.getAttribute('data-mode');
+              let description = '';
+              switch (mode) {
+                case 'bedwars':
+                  description = `
+                    <p><strong>Bedwars</strong> é um modo de jogo PvP onde os jogadores devem proteger suas camas enquanto tentam destruir as camas dos adversários. Disponível em:</p>
+                    <ul>
+                      <li><strong>Solo:</strong> 1 vs 1</li>
+                      <li><strong>Duos:</strong> 2 vs 2</li>
+                      <li><strong>Trios:</strong> 3 vs 3</li>
+                      <li><strong>1v12v23v3:</strong> Combinação de times em um mapa grande</li>
+                    </ul>
+                  `;
+                  break;
+                case 'treino':
+                  description = `
+                    <p><strong>Treino</strong> é um modo dedicado ao aprimoramento de habilidades, com áreas para praticar PvP, parkour e outras mecânicas do jogo.</p>
+                  `;
+                  break;
+                case 'survival':
+                  description = `
+                    <p><strong>Survival</strong> é um modo de sobrevivência onde os jogadores exploram, constroem e enfrentam desafios em um mundo aberto.</p>
+                  `;
+                  break;
+                case 'rankup':
+                  description = `
+                    <p><strong>Rankup</strong> é um modo onde os jogadores progridem através de ranks ao completar missões e acumular pontos.</p>
+                  `;
+                  break;
+              }
+              if (infoDetails && infoOverlay) {
+                infoDetails.innerHTML = description;
+                infoOverlay.style.display = 'block';
+              }
+            });
+          });
+        }
+
+        if (closeInfo && infoOverlay) {
+          closeInfo.addEventListener('click', () => {
+            infoOverlay.style.display = 'none';
+          });
+        }
+
+        // Fechar overlay ao clicar fora
+        document.addEventListener('click', (e) => {
+          if (infoOverlay && !infoOverlay.contains(e.target) && !e.target.closest('.stripe-item')) {
+            infoOverlay.style.display = 'none';
           }
-          updateServerStatus(); // Chama imediatamente
-          setInterval(updateServerStatus, 30000); // Atualiza a cada 30 segundos
         });
-      </script>
-    </body>
-  </html>
+
+        // Redirecionar para a loja online ao clicar no texto "LOJA"
+        const lojaItem = document.querySelector('.loja-item');
+        if (lojaItem) {
+          lojaItem.addEventListener('click', () => {
+            window.open('https://lordhubloja.centralcart.com.br/', '_blank');
+          });
+        }
+
+        // Atualizar status do servidor
+        const serverStatus = document.getElementById('server-status');
+        const serverVersion = document.getElementById('server-version');
+        const serverTime = document.getElementById('server-time');
+        async function updateServerStatus() {
+          try {
+            const response = await fetch('https://api.mcsrvstat.us/2/lordhub.com.br');
+            const data = await response.json();
+            if (serverStatus && serverVersion && serverTime) {
+              if (data.online) {
+                serverStatus.textContent = `Servidor Online - ${data.players.online}/${data.players.max} jogadores`;
+                serverStatus.className = 'server-status online';
+                serverVersion.textContent = `Versão: ${data.version}`;
+              } else {
+                serverStatus.textContent = 'Servidor Offline';
+                serverStatus.className = 'server-status offline';
+                serverVersion.textContent = 'Versão: Não disponível';
+              }
+              const now = new Date();
+              serverTime.textContent = `Horário: ${now.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' })}`;
+            }
+          } catch (error) {
+            if (serverStatus && serverVersion && serverTime) {
+              serverStatus.textContent = 'Erro ao carregar status';
+              serverStatus.className = 'server-status';
+              serverVersion.textContent = 'Versão: Erro ao carregar';
+              serverTime.textContent = 'Horário: Erro ao carregar';
+            }
+            console.error('Erro ao buscar status do servidor:', error);
+          }
+        }
+        updateServerStatus(); // Chama imediatamente
+        setInterval(updateServerStatus, 30000); // Atualiza a cada 30 segundos
+      });
+    </script>
+  </body>
+</html>
