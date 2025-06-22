@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LORDHUB - Administração</title>
     <link rel="icon" type="image/png" href="media/favicon.png">
-    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=Space+Grotesk:500,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
       body {
@@ -14,7 +14,110 @@
         color: #fff;
         font-family: 'Space Grotesk', sans-serif;
         margin: 0;
-        padding: 20px;
+        padding: 0;
+        overflow-x: hidden;
+      }
+      .header {
+        background: #23282d;
+        color: #fff;
+        padding: 15px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        border-bottom: 1px solid #4A3A6A;
+      }
+      .header .title {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background: linear-gradient(45deg, #B080FF, #8A2BE2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .sidebar {
+        width: 200px;
+        background: #23282d;
+        color: #fff;
+        position: fixed;
+        top: 70px;
+        bottom: 0;
+        padding-top: 20px;
+        overflow-y: auto;
+        transition: width 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+      }
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .sidebar ul li {
+        padding: 15px 20px;
+        transition: background 0.3s ease;
+      }
+      .sidebar ul li a {
+        color: #D0C0FF;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        transition: color 0.3s ease;
+      }
+      .sidebar ul li a i {
+        margin-right: 15px;
+        font-size: 20px;
+      }
+      .sidebar ul li a:hover {
+        color: #fff;
+        background: #383f45;
+        border-radius: 5px;
+      }
+      .sidebar ul li.active a {
+        color: #fff;
+        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+        border-radius: 5px;
+        font-weight: 700;
+      }
+      .sidebar ul li.logout a {
+        color: #FF4D4D;
+        font-weight: 700;
+      }
+      .sidebar ul li.logout a:hover {
+        color: #fff;
+        background: #383f45;
+        border-radius: 5px;
+      }
+      .sidebar ul li.user-role {
+        color: #FF4D4D;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        font-size: 16px;
+      }
+      .sidebar ul li.user-role i {
+        margin-right: 15px;
+        font-size: 20px;
+      }
+      .main-content {
+        margin-left: 220px;
+        padding: 90px 30px 30px;
+        flex-grow: 1;
+        background: #2D1B4A;
+        border-left: 1px solid #4A3A6A;
+        min-height: calc(100vh - 70px);
+        display: none;
+        color: #fff;
+        transition: margin-left 0.3s ease;
       }
       .login-container {
         max-width: 400px;
@@ -51,194 +154,260 @@
         background: linear-gradient(45deg, #6A1EC2, #4A0E92);
       }
       .admin-container {
-        max-width: 800px;
-        margin: 20px auto;
-        display: none;
-      }
-      .admin-tabs {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 20px;
-      }
-      .tab-item {
-        padding: 10px 20px;
-        margin: 0 5px;
-        background: rgba(45, 51, 57, 0.9);
-        border-radius: 5px;
-        cursor: pointer;
-        color: #B0B0B0;
-        transition: background 0.3s, color 0.3s;
-      }
-      .tab-item:hover {
-        background: #8A2BE2;
-        color: #fff;
-      }
-      .tab-item.active-tab {
-        background: #8A2BE2;
-        color: #fff;
-      }
-      .post-container, .chat-container {
-        display: none;
-      }
-      .post-container.active, .chat-container.active {
         display: block;
+        max-width: 1200px;
+        margin: 0 auto;
       }
-      .post, .chat {
-        background: rgba(45, 51, 57, 0.8);
-        padding: 15px;
-        margin-bottom: 15px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        position: relative;
-      }
-      .post h3, .chat h3 {
-        color: #8A2BE2;
-        margin: 0 0 10px;
-        text-transform: uppercase;
-      }
-      .post p, .chat p {
-        margin: 5px 0;
-        color: #B0B0B0;
-      }
-      .post-content, .chat-messages {
-        margin-top: 10px;
-      }
-      .no-posts, .no-chats {
-        text-align: center;
-        color: #B0B0B0;
-      }
-      .manage-posts, .delete-post, .edit-post, .end-chat, .reply-chat {
-        background: linear-gradient(45deg, #FF0000, #CC0000);
+      .painel-button {
+        background: linear-gradient(45deg, #FF4D4D, #CC0000);
         color: white;
         border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 12px 24px;
+        border-radius: 8px;
         cursor: pointer;
-        margin-top: 10px;
-        margin-right: 10px;
+        font-size: 16px;
+        font-weight: 700;
         display: inline-block;
-        transition: 0.3s;
+        margin: 10px;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 77, 77, 0.4);
       }
-      .manage-posts {
-        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+      .painel-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 77, 77, 0.6);
+      }
+      .admin-content h2 {
+        color: #B080FF;
+        text-transform: uppercase;
         margin-bottom: 20px;
+        font-weight: 700;
+        letter-spacing: 1px;
       }
-      .edit-post {
-        background: linear-gradient(45deg, #F4A261, #D68A1A);
+      .admin-content p {
+        color: #D0C0FF;
+        margin: 10px 0;
       }
-      .reply-chat {
-        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+      .dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
       }
-      .manage-posts:hover, .delete-post:hover, .edit-post:hover, .end-chat:hover, .reply-chat:hover {
-        transform: scale(1.05);
+      .card {
+        background: #3A4046;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
-      .post-form {
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+      }
+      .card h3 {
+        margin: 0 0 10px;
+        color: #B080FF;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .card p {
+        font-size: 28px;
+        margin: 0;
+        color: #fff;
+        font-weight: 700;
+      }
+      .sales-menu {
         display: none;
-        background: rgba(45, 51, 57, 0.9);
+        background: #3A4046;
         padding: 20px;
         border-radius: 10px;
         margin-top: 20px;
-        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       }
-      .post-form input, .post-form textarea {
-        width: 90%;
-        padding: 10px;
-        margin: 10px 0;
-        border: none;
-        border-radius: 5px;
-        background: #3A4046;
-        color: #fff;
-      }
-      .post-form button {
+      .back-button {
         background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
         color: white;
         border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
+        padding: 12px 24px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: 0.3s;
-      }
-      .post-form button:hover {
-        background: linear-gradient(45deg, #6A1EC2, #4A0E92);
-      }
-      .post-content h3 {
-        color: #8A2BE2;
-        font-size: 1.5em;
-        margin: 15px 0 10px;
-      }
-      .post-content strong {
-        font-weight: bold;
-        color: #fff;
-      }
-      .post-content em {
-        font-style: italic;
-      }
-      .post-content ul {
-        list-style-type: disc;
-        margin: 10px 0;
-        padding-left: 20px;
-      }
-      .post-content ul li {
-        color: #B0B0B0;
-        margin-bottom: 5px;
-      }
-      .post-content p {
-        margin: 10px 0;
-      }
-      .chat-messages p {
-        margin: 5px 0;
-      }
-      .post-form.editing .post-form-create {
-        display: none;
-      }
-      .post-form.editing .post-form-edit {
+        font-size: 16px;
+        font-weight: 700;
         display: inline-block;
+        margin: 10px 0;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
       }
-      .chat-window {
-        display: none;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 300px;
-        height: 400px;
-        background: rgba(45, 51, 57, 0.9);
+      .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(138, 43, 226, 0.6);
+      }
+      .sales-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        color: #fff;
+        background: #3A4046;
         border-radius: 10px;
-        padding: 15px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        flex-direction: column;
-        justify-content: space-between;
+        overflow: hidden;
       }
-      .chat-messages {
-        height: 80%;
-        overflow-y: auto;
+      .sales-table th, .sales-table td {
+        border: 1px solid #4A3A6A;
+        padding: 12px;
+        text-align: left;
+      }
+      .sales-table th {
+        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
+        color: #fff;
+        font-weight: 700;
+      }
+      .sales-table tr:nth-child(even) {
+        background: #2D3339;
+      }
+      .sales-table tr:hover {
+        background: #383f45;
+      }
+      .chart-container {
+        max-width: 700px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #3A4046;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .notifications {
+        background: #3A4046;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .notifications h3 {
+        color: #B080FF;
+        margin-top: 0;
+      }
+      .notifications ul {
+        list-style: none;
+        padding: 0;
+      }
+      .notifications ul li {
+        padding: 10px 0;
+        border-bottom: 1px solid #4A3A6A;
+        color: #D0C0FF;
+      }
+      .footer {
+        margin-top: 40px;
+        padding: 20px;
+        text-align: center;
+        background: #23282d;
+        border-top: 1px solid #4A3A6A;
+        color: #D0C0FF;
+        font-size: 14px;
+      }
+      .bot-section {
+        display: none;
+        background: #3A4046;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .embed-form {
+        display: none;
+        background: #3A4046;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .embed-form label {
+        color: #D0C0FF;
+        display: block;
+        margin: 10px 0 5px;
+      }
+      .embed-form input, .embed-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background: #2D3339;
+        color: #fff;
         margin-bottom: 10px;
       }
-      .chat-messages p {
-        margin: 5px 0;
-        padding: 5px;
-        background: #3A4046;
-        border-radius: 5px;
-      }
-      .chat-input {
-        display: flex;
-        gap: 5px;
-      }
-      .chat-input input {
-        flex: 1;
-        padding: 8px;
-        border: none;
-        border-radius: 5px;
-        background: #3A4046;
-        color: #fff;
-      }
-      .chat-input button {
-        padding: 8px;
-        border: none;
-        border-radius: 5px;
-        background: #007BFF;
+      .embed-form button {
+        background: linear-gradient(45deg, #8A2BE2, #6A1EC2);
         color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
         cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        margin: 10px 0;
+      }
+      .embed-form button:hover {
+        background: linear-gradient(45deg, #6A1EC2, #4A0E92);
+      }
+      .field-container {
+        margin: 15px 0;
+        padding: 10px;
+        background: #2D3339;
+        border-radius: 5px;
+      }
+      .field-container button {
+        background: linear-gradient(45deg, #FF4D4D, #CC0000);
+        margin-left: 10px;
+      }
+      .field-container button:hover {
+        background: linear-gradient(45deg, #CC0000, #990000);
+      }
+      .color-picker {
+        width: 50px;
+        height: 30px;
+        border: none;
+        cursor: pointer;
+      }
+      .preview-container {
+        margin-top: 20px;
+        padding: 20px;
+        background: #2D3339;
+        border-radius: 10px;
+        max-width: 400px;
+      }
+      .preview-container h3 {
+        color: #B080FF;
+      }
+      .embed-preview {
+        border-left: 5px solid #8A2BE2;
+        padding-left: 10px;
+      }
+      .embed-preview img {
+        max-width: 100%;
+        border-radius: 5px;
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 70px;
+        }
+        .sidebar ul li a span {
+          display: none;
+        }
+        .sidebar ul li.user-role span {
+          display: none;
+        }
+        .sidebar ul li a i {
+          margin-right: 0;
+          font-size: 24px;
+        }
+        .main-content {
+          margin-left: 90px;
+          padding: 80px 15px 15px;
+        }
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
@@ -249,307 +418,522 @@
       <input type="password" id="admin-password" placeholder="Digite a senha de administrador">
       <button onclick="login()">Entrar</button>
     </div>
-    <div class="admin-container">
-      <div class="admin-tabs">
-        <div class="tab-item active-tab" data-tab="posts">Postagens</div>
-        <div class="tab-item" data-tab="chats">Chats</div>
-      </div>
-      <div class="post-container active">
-        <h2><i class="fa fa-pen"></i> Gerenciar Posts</h2>
-        <button class="manage-posts" id="show-post-form"><i class="fa fa-plus"></i> Novo Post</button>
-        <div id="post-form" class="post-form">
-          <input type="text" id="post-title" placeholder="Título do Post">
-          <textarea id="post-text" placeholder="Texto do Post" rows="5"></textarea>
-          <input type="hidden" id="post-id">
-          <button class="post-form-create" onclick="createPost()">Postar</button>
-          <button class="post-form-edit" onclick="updatePost()" style="display: none;">Salvar Alterações</button>
-        </div>
-        <div id="posts-list"></div>
-      </div>
-      <div class="chat-container">
-        <h2><i class="fa fa-comments"></i> Gerenciar Chats</h2>
-        <div id="chats-list"></div>
-      </div>
+    <div class="header" style="display: none;">
+      <h1 class="title">LORDHUB - Administração</h1>
     </div>
-    <div class="chat-window" id="chat-window">
-      <div class="chat-messages" id="chat-messages"></div>
-      <div class="chat-input">
-        <input type="text" id="admin-message" placeholder="Digite sua resposta">
-        <button onclick="sendAdminMessage()">Enviar</button>
+    <div class="sidebar" style="display: none;">
+      <ul id="sidebar-menu">
+        <li class="active"><a href="#" onclick="showSection('inicio')"><i class="fa fa-home"></i> <span>Início</span></a></li>
+        <li id="vendas-menu-item"><a href="#" onclick="toggleSalesMenu()"><i class="fa fa-money"></i> <span>Vendas</span></a></li>
+        <li id="painel-menu-item"><a href="#" onclick="window.open('http://ex.com.br')"><i class="fa fa-dashboard"></i> <span>Painel</span></a></li>
+        <li id="bot-menu-item" style="display: none;"><a href="#" onclick="showSection('bot')"><i class="fa fa-android"></i> <span>Bot</span></a></li>
+        <li class="logout"><a href="#" onclick="logout()"><i class="fa fa-sign-out"></i> <span>Sair</span></a></li>
+        <li id="user-role" class="user-role" style="display: none;"><i class="fa fa-user"></i> <span id="user-role-text"></span></li>
+      </ul>
+    </div>
+    <div class="main-content" style="display: none;">
+      <div class="admin-container">
+        <div class="admin-content" id="inicio">
+          <h2>Painel de Administração LORDHUB</h2>
+          <div class="dashboard">
+            <div class="card">
+              <h3>Despesas Totais</h3>
+              <p id="total-expenses">R$ 0,00</p>
+            </div>
+            <div class="card">
+              <h3>Vendas Totais</h3>
+              <p id="total-sales">R$ 0,00</p>
+            </div>
+            <div class="card">
+              <h3>Jogadores Online</h3>
+              <p id="online-players">0</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="salesExpensesChart"></canvas>
+          </div>
+          <div class="notifications">
+            <h3>Notificações</h3>
+            <ul>
+              <li>Novo plugin disponível para instalação!</li>
+              <li>Manutenção do servidor agendada para 25/06/2025.</li>
+              <li>Atualização do painel v1.2 lançada.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="sales-menu" id="sales-menu" style="display: none;">
+          <button class="back-button" onclick="backToDashboard()"><i class="fa fa-arrow-left"></i> Voltar</button>
+          <button class="painel-button" onclick="showYear('2025')">2025</button>
+          <button class="painel-button" onclick="showYear('2026')">2026</button>
+          <div id="year-data"></div>
+        </div>
+        <div class="bot-section" id="bot" style="display: none;">
+          <h2>Gerenciar Bot</h2>
+          <button class="painel-button" onclick="showEmbedForm()">Criar Embed</button>
+        </div>
+        <div class="embed-form" id="embed-form" style="display: none;">
+          <button class="back-button" onclick="backToBotSection()"><i class="fa fa-arrow-left"></i> Voltar</button>
+          <h2>Criar Embed</h2>
+          <div id="webhook-input" style="display: none;">
+            <label for="webhook-url">URL do Webhook</label>
+            <input type="text" id="webhook-url" placeholder="https://discord.com/api/webhooks/...">
+            <button onclick="saveWebhook()">Iniciar</button>
+          </div>
+          <div id="embed-builder" style="display: none;">
+            <label for="embed-title">Título</label>
+            <input type="text" id="embed-title" placeholder="Título do Embed">
+            <label for="embed-description">Descrição</label>
+            <textarea id="embed-description" placeholder="Descrição do Embed (use **negrito**, *itálico*, etc.)"></textarea>
+            <label for="embed-color">Cor</label>
+            <input type="color" id="embed-color" class="color-picker" value="#8A2BE2">
+            <label for="embed-image">URL da Imagem</label>
+            <input type="text" id="embed-image" placeholder="https://exemplo.com/imagem.png">
+            <label for="embed-thumbnail">URL da Miniatura</label>
+            <input type="text" id="embed-thumbnail" placeholder="https://exemplo.com/miniatura.png">
+            <label for="embed-footer">Rodapé</label>
+            <input type="text" id="embed-footer" placeholder="Texto do Rodapé">
+            <label for="embed-author">Autor</label>
+            <input type="text" id="embed-author" placeholder="Nome do Autor">
+            <label for="embed-author-url">URL do Autor</label>
+            <input type="text" id="embed-author-url" placeholder="https://exemplo.com">
+            <label>Campos</label>
+            <div id="embed-fields"></div>
+            <button class="painel-button" onclick="addField()">Adicionar Campo</button>
+            <div class="preview-container">
+              <h3>Visualização do Embed</h3>
+              <div class="embed-preview" id="embed-preview"></div>
+            </div>
+            <button onclick="sendEmbed()">Enviar Embed</button>
+          </div>
+        </div>
+        <div class="footer">
+          <p>Painel LORDHUB v1.2 | Desenvolvido por LORDHUB Team | Suporte: suporte@lordhub.com</p>
+        </div>
       </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script>
-      $(document).ready(function() {
-        // Lógica para alternar abas
-        $('.tab-item').on('click', function() {
-          $('.tab-item').removeClass('active-tab');
-          $(this).addClass('active-tab');
+      let salesData = {
+        2025: {
+          Janeiro: { sales: 0, expenses: 0 },
+          Fevereiro: { sales: 0, expenses: 0 },
+          Março: { sales: 0, expenses: 0 },
+          Abril: { sales: 0, expenses: 0 },
+          Maio: { sales: 0, expenses: 0 },
+          Junho: { sales: 0, expenses: 0 },
+          Julho: { sales: 0, expenses: 0 },
+          Agosto: { sales: 0, expenses: 0 },
+          Setembro: { sales: 0, expenses: 0 },
+          Outubro: { sales: 0, expenses: 0 },
+          Novembro: { sales: 0, expenses: 0 },
+          Dezembro: { sales: 0, expenses: 0 }
+        },
+        2026: {
+          Janeiro: { sales: 0, expenses: 0 },
+          Fevereiro: { sales: 0, expenses: 0 },
+          Março: { sales: 0, expenses: 0 },
+          Abril: { sales: 0, expenses: 0 },
+          Maio: { sales: 0, expenses: 0 },
+          Junho: { sales: 0, expenses: 0 },
+          Julho: { sales: 0, expenses: 0 },
+          Agosto: { sales: 0, expenses: 0 },
+          Setembro: { sales: 0, expenses: 0 },
+          Outubro: { sales: 0, expenses: 0 },
+          Novembro: { sales: 0, expenses: 0 },
+          Dezembro: { sales: 0, expenses: 0 }
+        }
+      };
 
-          var tab = $(this).data('tab');
-          $('.post-container, .chat-container').removeClass('active').hide();
-          if (tab === 'posts') {
-            $('.post-container').addClass('active').show();
-          } else if (tab === 'chats') {
-            $('.chat-container').addClass('active').show();
-          }
-        });
-      });
+      let salesExpensesChart = null;
+      let userRole = null;
+      let webhookUrl = null;
 
       function login() {
         const password = $('#admin-password').val();
-        if (password === 'admin123') {
-          $('.login-container').hide();
-          $('.admin-container').show();
-          displayPosts();
-          displayChats();
+        if (password === 'lordceo2007') {
+          userRole = 'CEO';
+          setupUserInterface('CEO');
+        } else if (password === 'lordadm@2008') {
+          userRole = 'ADM';
+          setupUserInterface('ADM');
+        } else if (password === 'lordmod2006') {
+          userRole = 'MODERADOR';
+          setupUserInterface('MODERADOR');
         } else {
-          alert('Acesso negado!');
+          alert('Senha inválida! Tente novamente.');
+          $('#admin-password').val('');
+          return;
+        }
+        $('.login-container').hide();
+        $('.header').show();
+        $('.sidebar').show();
+        $('.main-content').show();
+        $('#inicio').show();
+        $('#sales-menu').hide();
+        updateDashboard();
+      }
+
+      function setupUserInterface(role) {
+        $('#vendas-menu-item').hide();
+        $('#painel-menu-item').hide();
+        $('#bot-menu-item').hide();
+        $('#user-role').show();
+        if (role === 'CEO') {
+          $('#vendas-menu-item').show();
+          $('#painel-menu-item').show();
+          $('#bot-menu-item').show();
+          $('#user-role-text').text('LORDCEO');
+        } else if (role === 'ADM') {
+          $('#vendas-menu-item').show();
+          $('#bot-menu-item').show();
+          $('#user-role-text').text('LORDADM');
+        } else if (role === 'MODERADOR') {
+          $('#user-role-text').text('LORDMOD');
         }
       }
 
-      function parseMarkdown(text) {
-        let lines = text.split('\n').filter(line => line.trim() !== '');
-        let html = '';
-        let inList = false;
+      function logout() {
+        $('.header').hide();
+        $('.sidebar').hide();
+        $('.main-content').hide();
+        $('.login-container').show();
+        $('#admin-password').val('');
+        userRole = null;
+        $('#user-role').hide();
+        webhookUrl = null;
+      }
 
-        lines.forEach(line => {
-          if (line.startsWith('### ')) {
-            if (inList) {
-              html += '</ul>';
-              inList = false;
+      function toggleSalesMenu() {
+        $('.admin-content').hide();
+        $('#sales-menu').show();
+        $('#year-data').hide();
+        $('#bot').hide(); // Explicitly hide bot section
+        $('#embed-form').hide(); // Explicitly hide embed form
+      }
+
+      function backToDashboard() {
+        $('#sales-menu').hide();
+        $('#inicio').show();
+        updateDashboard();
+      }
+
+      function showYear(year) {
+        let table = `<h2>Vendas e Despesas - ${year}</h2>`;
+        table += `<table class="sales-table">
+                  <tr>
+                    <th>Mês</th>
+                    <th>Vendas (R$)</th>
+                    <th>Despesas (R$)</th>
+                  </tr>`;
+        for (let month in salesData[year]) {
+          table += `<tr>
+                    <td>${month}</td>
+                    <td>${salesData[year][month].sales.toFixed(2).replace('.', ',')}</td>
+                    <td>${salesData[year][month].expenses.toFixed(2).replace('.', ',')}</td>
+                  </tr>`;
+        }
+        table += `</table>`;
+        $('#year-data').html(table).show();
+      }
+
+      function showSection(section) {
+        $('.admin-content').hide();
+        $('#sales-menu').hide();
+        $('#bot').hide();
+        $('#embed-form').hide();
+        $(`#${section}`).show();
+        if (section === 'inicio') {
+          updateDashboard();
+        }
+        if (section === 'bot' && webhookUrl) {
+          $('#webhook-input').hide();
+          $('#embed-builder').show();
+        } else if (section === 'bot' && !webhookUrl) {
+          $('#webhook-input').show();
+          $('#embed-builder').hide();
+        }
+      }
+
+      function updateDashboard() {
+        let totalSales = 0;
+        let totalExpenses = 0;
+        for (let year in salesData) {
+          for (let month in salesData[year]) {
+            totalSales += salesData[year][month].sales;
+            totalExpenses += salesData[year][month].expenses;
+          }
+        }
+        $('#total-sales').text(`R$ ${totalSales.toFixed(2).replace('.', ',')}`);
+        $('#total-expenses').text(`R$ ${totalExpenses.toFixed(2).replace('.', ',')}`);
+
+        try {
+          const canvas = document.getElementById('salesExpensesChart');
+          if (canvas) {
+            const ctx = canvas.getContext('2d');
+            if (salesExpensesChart) {
+              salesExpensesChart.destroy();
             }
-            html += `<h3>${line.slice(4)}</h3>`;
-            return;
+            salesExpensesChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Vendas Totais', 'Despesas Totais'],
+                datasets: [{
+                  label: 'Valores (R$)',
+                  data: [totalSales, totalExpenses],
+                  backgroundColor: ['#8A2BE2', '#FF4D4D'],
+                  borderColor: ['#6A1EC2', '#CC0000'],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: 'Valor (R$)',
+                      color: '#D0C0FF'
+                    },
+                    ticks: {
+                      color: '#D0C0FF'
+                    },
+                    grid: {
+                      color: '#4A3A6A'
+                    }
+                  },
+                  x: {
+                    ticks: {
+                      color: '#D0C0FF'
+                    },
+                    grid: {
+                      color: '#4A3A6A'
+                    }
+                  }
+                },
+                plugins: {
+                  legend: {
+                    labels: {
+                      color: '#D0C0FF'
+                    }
+                  }
+                }
+              }
+            });
+          } else {
+            console.error('Elemento canvas #salesExpensesChart não encontrado.');
           }
+        } catch (error) {
+          console.error('Erro ao criar o gráfico:', error);
+        }
 
-          if (line.startsWith('* ')) {
-            if (!inList) {
-              html += '<ul>';
-              inList = true;
-            }
-            html += `<li>${line.slice(2)}</li>`;
-            return;
+        $.getJSON('https://api.mcsrvstat.us/2/lorub.com.br', function(data) {
+          if (data && data.players && typeof data.players.online !== 'undefined') {
+            $('#online-players').text(data.players.online);
+          } else {
+            $('#online-players').text('0');
           }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          console.error('Erro ao buscar jogadores online:', textStatus, errorThrown);
+          $('#online-players').text('Erro');
+        });
+      }
 
-          if (inList) {
-            html += '</ul>';
-            inList = false;
+      function showEmbedForm() {
+        $('.admin-content').hide();
+        $('#bot').hide();
+        $('#sales-menu').hide();
+        $('#embed-form').show();
+        if (webhookUrl) {
+          $('#webhook-input').hide();
+          $('#embed-builder').show();
+        } else {
+          $('#webhook-input').show();
+          $('#embed-builder').hide();
+        }
+        updatePreview();
+      }
+
+      function backToBotSection() {
+        $('#embed-form').hide();
+        $('#bot').show();
+      }
+
+      function saveWebhook() {
+        webhookUrl = $('#webhook-url').val().trim();
+        if (!webhookUrl || !/webhook/.test(webhookUrl) || !webhookUrl.startsWith('https://')) {
+          alert('Por favor, insira uma URL de webhook válida do Discord (deve começar com https:// e conter "webhook").');
+          return;
+        }
+        $('#webhook-input').hide();
+        $('#embed-builder').show();
+        updatePreview();
+      }
+
+      function addField() {
+        const fields = document.createElement('div');
+        fields.className = 'field-container';
+        fields.innerHTML = `
+          <label for="field-title">Título do Campo</label>
+          <input type="text" class="field-title" placeholder="Título do Campo">
+          <label for="field-value">Descrição do Campo</label>
+          <textarea class="field-value" placeholder="Descrição do Campo (use **negrito**, *itálico*, etc.)"></textarea>
+          <label>Inline:</label>
+          <input type="checkbox" class="field-inline">
+          <button class="remove-field">Remover Campo</button>
+        `;
+        document.getElementById('embed-fields').appendChild(fields);
+        fields.querySelectorAll('input, textarea').forEach(input => {
+          input.addEventListener('input', updatePreview);
+        });
+        fields.querySelector('.remove-field').addEventListener('click', () => {
+          fields.remove();
+          updatePreview();
+        });
+        updatePreview();
+      }
+
+      function updatePreview() {
+        const previewElement = document.getElementById('embed-preview');
+        if (!previewElement) return;
+
+        const title = document.getElementById('embed-title').value;
+        const description = document.getElementById('embed-description').value;
+        const color = document.getElementById('embed-color').value;
+        const image = document.getElementById('embed-image').value;
+        const thumbnail = document.getElementById('embed-thumbnail').value;
+        const footer = document.getElementById('embed-footer').value;
+        const author = document.getElementById('embed-author').value;
+        const authorUrl = document.getElementById('embed-author-url').value;
+
+        let previewHtml = '';
+        if (author) {
+          previewHtml += `<p><strong><a href="${authorUrl || '#'}" style="color: #D0C0FF;">${author}</a></strong></p>`;
+        }
+        if (title) {
+          previewHtml += `<h4 style="color: #B080FF;">${title}</h4>`;
+        }
+        if (description) {
+          let formattedDesc = description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                        .replace(/_(.*?)_/g, '<em>$1</em>')
+                                        .replace(/~~(.*?)~~/g, '<del>$1</del>')
+                                        .replace(/```(.*?)```/gs, '<pre>$1</pre>')
+                                        .replace(/`(.*?)`/g, '<code>$1</code>')
+                                        .replace(/\n/g, '<br>');
+          previewHtml += `<p>${formattedDesc}</p>`;
+        }
+        const fields = document.querySelectorAll('.field-container');
+        fields.forEach(field => {
+          const fieldTitle = field.querySelector('.field-title')?.value || '';
+          const fieldValue = field.querySelector('.field-value')?.value || '';
+          const fieldInline = field.querySelector('.field-inline')?.checked || false;
+          if (fieldTitle && fieldValue) {
+            let formattedValue = fieldValue.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                          .replace(/_(.*?)_/g, '<em>$1</em>')
+                                          .replace(/~~(.*?)~~/g, '<del>$1</del>')
+                                          .replace(/```(.*?)```/gs, '<pre>$1</pre>')
+                                          .replace(/`(.*?)`/g, '<code>$1</code>')
+                                          .replace(/\n/g, '<br>');
+            previewHtml += `<div style="display: ${fieldInline ? 'inline-block' : 'block'}; margin-right: ${fieldInline ? '20px' : '0'}; vertical-align: top;">
+              <strong>${fieldTitle}</strong><br>${formattedValue}</div>`;
           }
+        });
+        if (thumbnail) {
+          previewHtml += `<img src="${thumbnail}" alt="Thumbnail" style="max-width: 80px; float: right; border-radius: 5px;">`;
+        }
+        if (image) {
+          previewHtml += `<img src="${image}" alt="Image" style="max-width: 100%; border-radius: 5px;">`;
+        }
+        if (footer) {
+          previewHtml += `<p style="font-size: 12px; color: gray;">${footer}</p>`;
+        }
+        previewElement.style.borderLeftColor = color;
+        previewElement.innerHTML = previewHtml;
+      }
 
-          line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-          line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      function isValidUrl(url) {
+        if (!url) return false;
+        try {
+          new URL(url);
+          return url.startsWith('http://') || url.startsWith('https://');
+        } catch {
+          return false;
+        }
+      }
 
-          if (line.trim()) {
-            html += `<p>${line}</p>`;
+      function sendEmbed() {
+        if (!webhookUrl) {
+          alert('Por favor, configure a URL do webhook primeiro.');
+          return;
+        }
+
+        const authorName = document.getElementById('embed-author').value;
+        const authorUrl = document.getElementById('embed-author-url').value.trim();
+        const imageUrl = document.getElementById('embed-image').value.trim();
+        const thumbnailUrl = document.getElementById('embed-thumbnail').value.trim();
+
+        if (authorUrl && !isValidUrl(authorUrl)) {
+          alert('A URL do autor deve ser uma URL válida (começar com http:// ou https://).');
+          return;
+        }
+        if (imageUrl && !isValidUrl(imageUrl)) {
+          alert('A URL da imagem deve ser uma URL válida (começar com http:// ou https://).');
+          return;
+        }
+        if (thumbnailUrl && !isValidUrl(thumbnailUrl)) {
+          alert('A URL da miniatura deve ser uma URL válida (começar com http:// ou https://).');
+          return;
+        }
+
+        const embed = {
+          title: document.getElementById('embed-title').value || undefined,
+          description: document.getElementById('embed-description').value || undefined,
+          color: parseInt(document.getElementById('embed-color').value.replace('#', ''), 16),
+          image: imageUrl ? { url: imageUrl } : undefined,
+          thumbnail: thumbnailUrl ? { url: thumbnailUrl } : undefined,
+          footer: document.getElementById('embed-footer').value ? { text: document.getElementById('embed-footer').value } : undefined,
+          author: authorName ? {
+            name: authorName,
+            url: authorUrl || undefined
+          } : undefined,
+          fields: []
+        };
+
+        document.querySelectorAll('#embed-fields .field-container').forEach(field => {
+          const title = field.querySelector('.field-title')?.value;
+          const value = field.querySelector('.field-value')?.value;
+          const inline = field.querySelector('.field-inline')?.checked || false;
+          if (title && value) {
+            embed.fields.push({ name: title, value: value, inline: inline });
           }
         });
 
-        if (inList) {
-          html += '</ul>';
-        }
-
-        return html;
-      }
-
-      $('#show-post-form').on('click', function() {
-        $('#post-title').val('');
-        $('#post-text').val('');
-        $('#post-id').val('');
-        $('.post-form-create').show();
-        $('.post-form-edit').hide();
-        $('#post-form').show();
-      });
-
-      function createPost() {
-        const title = $('#post-title').val();
-        const text = $('#post-text').val();
-        if (title && text) {
-          const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-          posts.push({ id: Date.now(), title, text, date: new Date().toLocaleString() });
-          localStorage.setItem('posts', JSON.stringify(posts));
-          $('#post-title').val('');
-          $('#post-text').val('');
-          $('#post-id').val('');
-          $('#post-form').hide();
-          displayPosts();
-          if (window.opener && !window.opener.closed) {
-            window.opener.location.reload();
-          }
-        } else {
-          alert('Preencha todos os campos!');
-        }
-      }
-
-      function editPost(postId) {
-        const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-        const post = posts.find(p => p.id === postId);
-        if (post) {
-          $('#post-title').val(post.title);
-          $('#post-text').val(post.text);
-          $('#post-id').val(post.id);
-          $('.post-form-create').hide();
-          $('.post-form-edit').show();
-          $('#post-form').show();
-        }
-      }
-
-      function updatePost() {
-        const title = $('#post-title').val();
-        const text = $('#post-text').val();
-        const postId = $('#post-id').val();
-        if (title && text && postId) {
-          let posts = JSON.parse(localStorage.getItem('posts') || '[]');
-          posts = posts.map(post => 
-            post.id === parseInt(postId) 
-              ? { ...post, title, text, date: new Date().toLocaleString() }
-              : post
-          );
-          localStorage.setItem('posts', JSON.stringify(posts));
-          $('#post-title').val('');
-          $('#post-text').val('');
-          $('#post-id').val('');
-          $('.post-form-create').show();
-          $('.post-form-edit').hide();
-          $('#post-form').hide();
-          displayPosts();
-          if (window.opener && !window.opener.closed) {
-            window.opener.location.reload();
-          }
-        } else {
-          alert('Preencha todos os campos!');
-        }
-      }
-
-      function displayPosts() {
-        const postsList = $('#posts-list');
-        postsList.empty();
-        const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-        if (posts.length === 0) {
-          postsList.append('<p class="no-posts">Nenhum post criado.</p>');
-        } else {
-          posts.forEach(post => {
-            const formattedText = parseMarkdown(post.text);
-            postsList.append(`
-              <div class="post">
-                <h3>${post.title}</h3>
-                <p><strong>Data:</strong> ${post.date}</p>
-                <div class="post-content">${formattedText}</div>
-                <button class="edit-post" onclick="editPost(${post.id})"><i class="fa fa-edit"></i> Editar</button>
-                <button class="delete-post" onclick="deletePost(${post.id})"><i class="fa fa-trash"></i> Deletar</button>
-              </div>
-            `);
-          });
-        }
-      }
-
-      function deletePost(postId) {
-        if (confirm('Deseja deletar este post?')) {
-          let posts = JSON.parse(localStorage.getItem('posts') || '[]');
-          posts = posts.filter(post => post.id !== postId);
-          localStorage.setItem('posts', JSON.stringify(posts));
-          displayPosts();
-          if (window.opener && !window.opener.closed) {
-            window.opener.location.reload();
-          }
-        }
-      }
-
-      function displayChats() {
-        const chatsList = $('#chats-list');
-        chatsList.empty();
-        const chats = JSON.parse(localStorage.getItem('chats') || '[]');
-        if (chats.length === 0) {
-          chatsList.append('<p class="no-chats">Nenhum chat disponível.</p>');
-        } else {
-          chats.forEach(chat => {
-            chatsList.append(`
-              <div class="chat">
-                <h3>Chat #${chat.id}</h3>
-                <p><strong>Data:</strong> ${chat.date}</p>
-                <p><strong>Gmail:</strong> ${chat.gmail}</p>
-                <p><strong>Nome:</strong> ${chat.name}</p>
-                <div class="chat-messages">
-                  ${chat.messages.map(msg => `<p>${msg}</p>`).join('')}
-                </div>
-                <button class="reply-chat" data-chat-id="${chat.id}"><i class="fa fa-reply"></i> Responder</button>
-                <button class="end-chat" onclick="endChat(${chat.id})"><i class="fa fa-times"></i> Finalizar</button>
-              </div>
-            `);
-          });
-          $('.reply-chat').on('click', function(e) {
-            e.stopPropagation();
-            const chatId = parseInt($(this).data('chat-id'));
-            openChatWindow(chatId);
-          });
-        }
-      }
-
-      let currentChatId = null;
-
-      function openChatWindow(chatId) {
-        currentChatId = chatId;
-        const chats = JSON.parse(localStorage.getItem('chats') || '[]');
-        const chat = chats.find(c => c.id === chatId);
-        if (chat) {
-          $('#chat-messages').empty();
-          chat.messages.forEach(msg => {
-            $('#chat-messages').append(`<p>${msg}</p>`);
-          });
-          $('#chat-window').show();
-          $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
-        }
-      }
-
-      function sendAdminMessage() {
-        const message = $('#admin-message').val();
-        if (message && currentChatId) {
-          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
-          const chat = chats.find(c => c.id === currentChatId);
-          if (chat) {
-            chat.messages.push(`[ADM] ${message}`);
-            localStorage.setItem('chats', JSON.stringify(chats));
-            $('#admin-message').val('');
-            $('#chat-messages').empty();
-            chat.messages.forEach(msg => {
-              $('#chat-messages').append(`<p>${msg}</p>`);
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ embeds: [embed] })
+        })
+        .then(response => {
+          if (response.ok) {
+            alert('Embed enviado com sucesso!');
+          } else {
+            return response.text().then(text => {
+              throw new Error(`Erro ${response.status}: ${text}`);
             });
-            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
-            displayChats();
           }
-        }
+        })
+        .catch(error => {
+          console.error('Erro ao enviar o embed:', error);
+          alert(`Erro ao enviar o embed: ${error.message}`);
+        });
       }
 
-      function endChat(chatId) {
-        if (confirm('Deseja finalizar este chat?')) {
-          let chats = JSON.parse(localStorage.getItem('chats') || '[]');
-          chats = chats.filter(c => c.id !== chatId);
-          localStorage.setItem('chats', JSON.stringify(chats));
-          currentChatId = null;
-          $('#chat-window').hide();
-          displayChats();
-        }
-      }
-
-      $(document).click(function(e) {
-        if (!$(e.target).closest('.chat-window').length && !$(e.target).hasClass('reply-chat')) {
-          $('#chat-window').hide();
-          currentChatId = null;
-        }
-      });
-
-      $(window).on('storage', function(e) {
-        if (e.originalEvent.key === 'chats' && currentChatId) {
-          const chats = JSON.parse(localStorage.getItem('chats') || '[]');
-          const chat = chats.find(c => c.id === currentChatId);
-          if (chat) {
-            $('#chat-messages').empty();
-            chat.messages.forEach(msg => {
-              $('#chat-messages').append(`<p>${msg}</p>`);
-            });
-            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
-          }
-        }
+      $(document).ready(function() {
+        updateDashboard();
+        $('#embed-title, #embed-description, #embed-color, #embed-image, #embed-thumbnail, #embed-footer, #embed-author, #embed-author-url').on('input', updatePreview);
       });
     </script>
   </body>
